@@ -18,6 +18,24 @@ app.use(cors());
 // Middleware for parsing JSON bodies
 app.use(json());
 
+app.get('/generate/apitokens', async (req, res) => {
+  try {
+    const org = new SecretVaultWrapper(
+      orgConfig.nodes,
+      orgConfig.orgCredentials
+    );
+    await org.init();
+
+    // generate api tokens for all nodes in the org config
+    const apiTokens = await org.generateTokensForAllNodes();
+
+    res.json({ apiTokens });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.get('/store', async (req, res) => {
   try {
     const SCHEMA_ID = '8055defe-fcb1-4011-904b-d28ae77aa9f7';
@@ -74,7 +92,6 @@ app.get('/store', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
 
 app.get('/', (req, res) => res.send('It Work'));
 
