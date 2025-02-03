@@ -4,7 +4,7 @@ function App() {
 
   return (
     <>
-      <h1>Air Tag Along</h1>
+      <h1 className="text-2xl">Air Tag Along</h1>
     </>
   )
 }
