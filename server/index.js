@@ -36,7 +36,7 @@ app.get('/generate/apitokens', async (req, res) => {
   }
 });
 
-app.get('/store', async (req, res) => {
+app.get('/storedata', async (req, res) => {
   try {
     const SCHEMA_ID = '8055defe-fcb1-4011-904b-d28ae77aa9f7';
 
@@ -72,21 +72,33 @@ app.get('/store', async (req, res) => {
     ];
     console.log('uploaded record ids:', newIds);
 
+    res.json({ newIds });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/readdata', async (req, res) => {
+  try {
+    const SCHEMA_ID = '8055defe-fcb1-4011-904b-d28ae77aa9f7';
+
+    const collection = new SecretVaultWrapper(
+      orgConfig.nodes,
+      orgConfig.orgCredentials,
+      SCHEMA_ID
+    );
+    await collection.init();
+
     // Read all collection data from the nodes, decrypting the specified fields
     const decryptedCollectionData = await collection.readFromNodes({});
 
-    // Log first 5 records
-    console.log(
-      'Most recent records',
-      decryptedCollectionData.slice(0, data.length)
-    );
+    const collectionData = decryptedCollectionData.map(data => ({
+      ...data,
+      years_in_web3: data.years_in_web3.toString()
+    }));
    
-    res.json({ 
-      id: decryptedCollectionData[0]._id,
-      name: decryptedCollectionData[0].name,
-      years_in_web3: decryptedCollectionData[0].years_in_web3.toString(),
-      responses: decryptedCollectionData[0].responses,
-    });
+    res.json({ collectionData });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: error.message });
