@@ -4,6 +4,7 @@ import dotenv from 'dotenv';
 import pkg from 'body-parser';
 import { SecretVaultWrapper } from 'nillion-sv-wrappers';
 import { v4 as uuidv4 } from 'uuid';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { orgConfig } from './nillionOrgConfig.js';
 
 import schema from './schema.json' assert { type: 'json' };
@@ -16,10 +17,39 @@ const app = express();
 const port = 4000;
 const SCHEMA_ID = '74f65645-88cb-45b1-9e46-cff8bfc00e38';
 
+async function initializeGemini() {
+  const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+  
+  // For text-only input
+  const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+  
+  // For text-and-image input
+  const multimodalModel = genAI.getGenerativeModel({ model: 'gemini-pro-vision' });
+  
+  return { model, multimodalModel };
+}
+
+
 app.use(cors());
 
 // Middleware for parsing JSON bodies
 app.use(json());
+
+app.get('/test/gemini', async (req, res) => {
+  const { model } = await initializeGemini();
+
+  try {
+    const prompt = 'Write a short poem about artificial intelligence.';
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    console.log(response.text());
+
+    res.json({ text: response.text() });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
 app.get('/generate/apitokens', async (req, res) => {
   try {
