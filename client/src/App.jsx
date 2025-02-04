@@ -1,5 +1,6 @@
 import { HashRouter, Route, Routes } from 'react-router-dom';
 
+import TravelerList from './pages/TravelerList';
 import TravelForm from "./pages/TravelForm";
 
 function App() {
@@ -12,10 +13,7 @@ function App() {
           element={<TravelForm />} />
         <Route
           path="/"
-          element={
-            <>
-              <h1>Test</h1>
-            </>} />
+          element={<TravelerList />} />
       </Routes>
     </HashRouter>
   )
