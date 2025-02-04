@@ -15,7 +15,7 @@ const TravelForm = () => {
   };
 
   return (
-    <div className="w-full max-w-lg mx-auto bg-white rounded-lg shadow-lg p-6">
+    <div className="w-full max-w-lg mx-auto bg-white rounded-lg shadow-lg p-6 mt-10">
       <div className="mb-6 text-center">
         <h2 className="text-2xl font-bold text-gray-800">Post Plan</h2>
       </div>
