@@ -1,6 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Web3 Experience Survey",
+  "title": "Air Tag Along",
   "type": "array",
   "items": {
     "type": "object",
@@ -19,7 +19,7 @@
         },
         "required": ["$share"]
       },
-      "years_in_web3": {
+      "travel_date": {
         "type": "object",
         "properties": {
           "$share": {
@@ -28,26 +28,25 @@
         },
         "required": ["$share"]
       },
-      "responses": {
-        "type": "array",
-        "items": {
-          "type": "object",
-          "properties": {
-            "rating": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 5
-            },
-            "question_number": {
-              "type": "integer",
-              "minimum": 1
-            }
-          },
-          "required": ["rating", "question_number"]
+      "departure_airport": {
+        "type": "object",
+        "properties": {
+          "$share": {
+            "type": "string"
+          }
         },
-        "minItems": 1
+        "required": ["$share"]
+      },
+      "destination": {
+        "type": "object",
+        "properties": {
+          "$share": {
+            "type": "string"
+          }
+        },
+        "required": ["$share"]
       }
     },
-    "required": ["_id", "name", "years_in_web3", "responses"]
+    "required": ["_id", "name", "travel_date", "departure_airport", "destination"]
   }
 }

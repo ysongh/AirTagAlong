@@ -14,6 +14,7 @@ dotenv.config();
 const { json } = pkg;
 const app = express();
 const port = 4000;
+const SCHEMA_ID = '9a87839f-f26e-427d-8912-a65b8f64f863';
 
 app.use(cors());
 
@@ -47,10 +48,9 @@ app.get('/create/schema', async (req, res) => {
     await org.init();
 
     // create a new collectionschema
-    const newSchema = await org.createSchema(schema, 'Web3 Experience Survey');
-    console.log('📚 New Schema:', newSchema);
+    const newSchema = await org.createSchema(schema, 'Air Tag Along');
 
-    res.json({ newSchema });
+    res.json({ newSchema, SchemaID: newSchema[0].result.data });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: error.message });
@@ -59,16 +59,12 @@ app.get('/create/schema', async (req, res) => {
 
 app.get('/storedata', async (req, res) => {
   try {
-    const SCHEMA_ID = '8055defe-fcb1-4011-904b-d28ae77aa9f7';
-
     const data = [
       {
-        name: { $allot: 'Test Song' }, // name will be encrypted to a $share
-        years_in_web3: { $allot: 8 }, // years_in_web3 will be encrypted to a $share
-        responses: [ 
-          { rating: 5, question_number: 1 },
-          { rating: 3, question_number: 2 },
-        ], // responses will be stored in plaintext
+        name: { $allot: 'Hackathon' },
+        travel_date: { $allot: '02/04/2025' },
+        departure_airport: { $allot: 'John F. Kennedy International' },
+        destination: { $allot: 'London Heathrow' },
       },
     ];
 
@@ -102,8 +98,6 @@ app.get('/storedata', async (req, res) => {
 
 app.get('/readdata', async (req, res) => {
   try {
-    const SCHEMA_ID = '8055defe-fcb1-4011-904b-d28ae77aa9f7';
-
     const collection = new SecretVaultWrapper(
       orgConfig.nodes,
       orgConfig.orgCredentials,
@@ -113,13 +107,8 @@ app.get('/readdata', async (req, res) => {
 
     // Read all collection data from the nodes, decrypting the specified fields
     const decryptedCollectionData = await collection.readFromNodes({});
-
-    const collectionData = decryptedCollectionData.map(data => ({
-      ...data,
-      years_in_web3: data.years_in_web3.toString()
-    }));
    
-    res.json({ collectionData });
+    res.json({ decryptedCollectionData });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: error.message });
