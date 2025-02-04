@@ -6,6 +6,8 @@ import { SecretVaultWrapper } from 'nillion-sv-wrappers';
 import { v4 as uuidv4 } from 'uuid';
 import { orgConfig } from './nillionOrgConfig.js';
 
+import schema from './schema.json' assert { type: 'json' };
+
 // Load environment variables from .env file
 dotenv.config();
 
@@ -30,6 +32,25 @@ app.get('/generate/apitokens', async (req, res) => {
     const apiTokens = await org.generateTokensForAllNodes();
 
     res.json({ apiTokens });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/create/schema', async (req, res) => {
+  try {
+    const org = new SecretVaultWrapper(
+      orgConfig.nodes,
+      orgConfig.orgCredentials
+    );
+    await org.init();
+
+    // create a new collectionschema
+    const newSchema = await org.createSchema(schema, 'Web3 Experience Survey');
+    console.log('📚 New Schema:', newSchema);
+
+    res.json({ newSchema });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: error.message });
