@@ -1,10 +1,10 @@
-
+import TravelForm from "./pages/TravelForm";
 
 function App() {
 
   return (
     <>
-      <h1 className="text-2xl">Air Tag Along</h1>
+      <TravelForm />
     </>
   )
 }
