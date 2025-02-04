@@ -9,9 +9,31 @@ const TravelForm = () => {
     { code: 'LHR', name: 'London Heathrow' },
   ];
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form submitted');
+
+    const formData = {
+      name: e.target.name.value,
+      travel_date: e.target.travel_date.value,
+      departure_airport: e.target.departure_airport.value,
+      destination: e.target.destination.value,
+    };
+
+    try {
+      const response = await fetch('http://localhost:4000/storedata', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+    } catch (error) {
+      console.error(error.message);
+    }
   };
 
   return (
@@ -27,6 +49,7 @@ const TravelForm = () => {
             Event Name
           </label>
           <input
+            id="name"
             type="text"
             placeholder="Concert, Sports Game, Conference, etc."
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -39,6 +62,7 @@ const TravelForm = () => {
             Travel Date
           </label>
           <input
+            id="travel_date"
             type="date"
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             required
@@ -51,6 +75,7 @@ const TravelForm = () => {
             Departure Airport
           </label>
           <select
+            id="departure_airport"
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             required
           >
@@ -69,6 +94,7 @@ const TravelForm = () => {
             Destination
           </label>
           <select
+            id="destination"
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             required
           >

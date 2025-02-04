@@ -96,6 +96,50 @@ app.get('/storedata', async (req, res) => {
   }
 });
 
+app.post('/storedata', async (req, res) => {
+  const name = req.body.name;
+  const travel_date = req.body.travel_date;
+  const departure_airport = req.body.departure_airport;
+  const destination = req.body.destination;
+
+  try {
+    const data = [
+      {
+        name: { $allot: name },
+        travel_date: { $allot: travel_date },
+        departure_airport: { $allot: departure_airport },
+        destination: { $allot: destination },
+      },
+    ];
+
+    // Create a secret vault wrapper and initialize the SecretVault collection to use
+    const collection = new SecretVaultWrapper(
+      orgConfig.nodes,
+      orgConfig.orgCredentials,
+      SCHEMA_ID
+    );
+    await collection.init();
+
+    // Write collection data to nodes encrypting the specified fields ahead of time
+    const dataWritten = await collection.writeToNodes(data);
+    console.log(
+      '👀 Data written to nodes:',
+      JSON.stringify(dataWritten, null, 2)
+    );
+
+    // Get the ids of the SecretVault records created
+    const newIds = [
+      ...new Set(dataWritten.map((item) => item.result.data.created).flat()),
+    ];
+    console.log('uploaded record ids:', newIds);
+
+    res.json({ newIds });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.get('/readdata', async (req, res) => {
   try {
     const collection = new SecretVaultWrapper(
