@@ -29,7 +29,6 @@ async function initializeGemini() {
   return { model, multimodalModel };
 }
 
-
 app.use(cors());
 
 // Middleware for parsing JSON bodies
@@ -184,6 +183,32 @@ app.get('/readdata', async (req, res) => {
     const decryptedCollectionData = await collection.readFromNodes({});
    
     res.json({ decryptedCollectionData });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/getmatchingtraveler', async (req, res) => {
+  const { model } = await initializeGemini();
+
+  try {
+    const collection = new SecretVaultWrapper(
+      orgConfig.nodes,
+      orgConfig.orgCredentials,
+      SCHEMA_ID
+    );
+    await collection.init();
+
+    const decryptedCollectionData = await collection.readFromNodes({});
+    const formattedData = JSON.stringify(decryptedCollectionData, null, 2);
+
+    const prompt = `Find which data has name as hackathon based on this list: ${formattedData}`;
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    console.log(response.text());
+    
+    res.json({ data: response.text() });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: error.message });
