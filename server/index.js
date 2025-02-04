@@ -14,7 +14,7 @@ dotenv.config();
 const { json } = pkg;
 const app = express();
 const port = 4000;
-const SCHEMA_ID = '9a87839f-f26e-427d-8912-a65b8f64f863';
+const SCHEMA_ID = '74f65645-88cb-45b1-9e46-cff8bfc00e38';
 
 app.use(cors());
 
@@ -101,7 +101,7 @@ app.post('/storedata', async (req, res) => {
   const travel_date = req.body.travel_date;
   const departure_airport = req.body.departure_airport;
   const destination = req.body.destination;
-
+  const additional_note = req.body.additional_note;
   try {
     const data = [
       {
@@ -109,6 +109,7 @@ app.post('/storedata', async (req, res) => {
         travel_date: { $allot: travel_date },
         departure_airport: { $allot: departure_airport },
         destination: { $allot: destination },
+        additional_note:  { $allot: additional_note },
       },
     ];
 

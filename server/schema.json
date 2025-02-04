@@ -45,6 +45,15 @@
           }
         },
         "required": ["$share"]
+      },
+      "additional_note": {
+        "type": "object",
+        "properties": {
+          "$share": {
+            "type": "string"
+          }
+        },
+        "required": ["$share"]
       }
     },
     "required": ["_id", "name", "travel_date", "departure_airport", "destination"]

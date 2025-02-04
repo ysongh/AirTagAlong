@@ -51,7 +51,7 @@ const TravelerList = () => {
                     <Plane className="w-4 h-4 mr-2" />
                     {traveler.departure_airport} → {traveler.destination}
                   </div>
-                  <p className="text-sm text-gray-600 mt-2">{traveler.notes}</p>
+                  <p className="text-sm text-gray-600 mt-2">{traveler.additional_note}</p>
                 </div>
               </div>
 

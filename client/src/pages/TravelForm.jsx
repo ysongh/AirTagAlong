@@ -17,6 +17,7 @@ const TravelForm = () => {
       travel_date: e.target.travel_date.value,
       departure_airport: e.target.departure_airport.value,
       destination: e.target.destination.value,
+      additional_note:  e.target.additional_note.value,
     };
 
     try {
@@ -112,6 +113,7 @@ const TravelForm = () => {
             Additional Notes
           </label>
           <textarea
+            id="additional_note"
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             rows="3"
             placeholder="Share any additional details about your travel plans..."
