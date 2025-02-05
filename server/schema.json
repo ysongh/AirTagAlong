@@ -10,14 +10,13 @@
         "format": "uuid",
         "coerce": true
       },
-      "name": {
+      "event_name": {
         "type": "object",
         "properties": {
           "$share": {
             "type": "string"
           }
-        },
-        "required": ["$share"]
+        }
       },
       "travel_date": {
         "type": "object",
@@ -56,6 +55,6 @@
         "required": ["$share"]
       }
     },
-    "required": ["_id", "name", "travel_date", "departure_airport", "destination"]
+    "required": ["_id", "event_name", "travel_date", "departure_airport", "destination"]
   }
 }

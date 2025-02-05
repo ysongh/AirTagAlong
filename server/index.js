@@ -15,7 +15,6 @@ dotenv.config();
 const { json } = pkg;
 const app = express();
 const port = 4000;
-const SCHEMA_ID = '74f65645-88cb-45b1-9e46-cff8bfc00e38';
 
 async function initializeGemini() {
   const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -90,7 +89,7 @@ app.get('/storedata', async (req, res) => {
   try {
     const data = [
       {
-        name: { $allot: 'Hackathon' },
+        event_name: { $allot: 'Hackathon' },
         travel_date: { $allot: '02/04/2025' },
         departure_airport: { $allot: 'John F. Kennedy International' },
         destination: { $allot: 'London Heathrow' },
@@ -101,7 +100,7 @@ app.get('/storedata', async (req, res) => {
     const collection = new SecretVaultWrapper(
       orgConfig.nodes,
       orgConfig.orgCredentials,
-      SCHEMA_ID
+      process.env.SCHEMA_ID
     );
     await collection.init();
 
@@ -126,7 +125,7 @@ app.get('/storedata', async (req, res) => {
 });
 
 app.post('/storedata', async (req, res) => {
-  const name = req.body.name;
+  const event_name = req.body.event_name;
   const travel_date = req.body.travel_date;
   const departure_airport = req.body.departure_airport;
   const destination = req.body.destination;
@@ -134,7 +133,7 @@ app.post('/storedata', async (req, res) => {
   try {
     const data = [
       {
-        name: { $allot: name },
+        event_name: { $allot: event_name },
         travel_date: { $allot: travel_date },
         departure_airport: { $allot: departure_airport },
         destination: { $allot: destination },
@@ -146,7 +145,7 @@ app.post('/storedata', async (req, res) => {
     const collection = new SecretVaultWrapper(
       orgConfig.nodes,
       orgConfig.orgCredentials,
-      SCHEMA_ID
+      process.env.SCHEMA_ID
     );
     await collection.init();
 
@@ -175,7 +174,7 @@ app.get('/readdata', async (req, res) => {
     const collection = new SecretVaultWrapper(
       orgConfig.nodes,
       orgConfig.orgCredentials,
-      SCHEMA_ID
+      process.env.SCHEMA_ID
     );
     await collection.init();
 
@@ -196,7 +195,7 @@ app.get('/getmatchingtraveler', async (req, res) => {
     const collection = new SecretVaultWrapper(
       orgConfig.nodes,
       orgConfig.orgCredentials,
-      SCHEMA_ID
+      process.env.SCHEMA_ID
     );
     await collection.init();
 
@@ -223,7 +222,7 @@ app.post('/getmatchingtraveler', async (req, res) => {
     const collection = new SecretVaultWrapper(
       orgConfig.nodes,
       orgConfig.orgCredentials,
-      SCHEMA_ID
+      process.env.SCHEMA_ID
     );
     await collection.init();
 
@@ -247,7 +246,7 @@ app.get('/allevents', async (req, res) => {
     const collection = new SecretVaultWrapper(
       orgConfig.nodes,
       orgConfig.orgCredentials,
-      SCHEMA_ID
+      process.env.SCHEMA_ID
     );
     await collection.init();
 
@@ -256,7 +255,7 @@ app.get('/allevents', async (req, res) => {
     const events = {};
 
     for(let data of decryptedCollectionData){
-      events[data.name] = (events[data.name] || 0) + 1;
+      events[data.event_name] = (events[data.event_name] || 0) + 1;
     }
 
     const arr = Object.entries(events).map(([key, value]) => ({

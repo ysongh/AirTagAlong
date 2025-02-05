@@ -13,7 +13,7 @@ const TravelForm = () => {
     e.preventDefault();
 
     const formData = {
-      name: e.target.name.value,
+      event_name: e.target.event_name.value,
       travel_date: e.target.travel_date.value,
       departure_airport: e.target.departure_airport.value,
       destination: e.target.destination.value,
@@ -50,7 +50,7 @@ const TravelForm = () => {
             Event Name
           </label>
           <input
-            id="name"
+            id="event_name"
             type="text"
             placeholder="Concert, Sports Game, Conference, etc."
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -122,7 +122,7 @@ const TravelForm = () => {
 
         <button
           type="submit"
-          className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          className="w-full py-2 px-4 bg-blue-600 text-white rounded-md cursor-pointer hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         >
           Post
         </button>
