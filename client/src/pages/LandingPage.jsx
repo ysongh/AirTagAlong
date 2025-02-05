@@ -1,7 +1,10 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, Users, Shield, Plane, ArrowRight, Sparkles, Brain, Target } from 'lucide-react';
 
 const LandingPage = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="min-h-screen">
       <div className="bg-blue-600 text-white">
@@ -18,10 +21,16 @@ const LandingPage = () => {
               Our intelligent matching system analyzes travel preferences, interests, and personalities to connect you with the most compatible travel buddies.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="px-8 py-3 bg-white text-blue-600 rounded-md font-medium hover:bg-blue-50 transition-colors">
+              <button
+                className="px-8 py-3 bg-white text-blue-600 rounded-md font-medium cursor-pointer hover:bg-blue-50 transition-colors"
+                onClick={() => navigate("/travellist")}
+              >
                 Find Travel Buddy
               </button>
-              <button className="px-8 py-3 border border-white rounded-md font-medium hover:bg-blue-700 transition-colors">
+              <button
+                className="px-8 py-3 border border-white rounded-md font-medium cursor-pointer hover:bg-blue-700 transition-colors"
+                onClick={() => navigate("/travelform")}
+              >
                 Post Your Trip
               </button>
             </div>
@@ -120,7 +129,10 @@ const LandingPage = () => {
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-3xl font-bold mb-6">Experience Smarter Travel Matching</h2>
           <p className="text-gray-600 mb-8">Join our AI-powered community and find your perfect travel companion today.</p>
-          <button className="px-8 py-3 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition-colors inline-flex items-center gap-2">
+          <button
+            className="px-8 py-3 bg-blue-600 text-white rounded-md font-medium cursor-pointer hover:bg-blue-700 transition-colors inline-flex items-center gap-2"
+            onClick={() => navigate("/travellist")}
+          >
             Get Started <ArrowRight className="w-4 h-4" />
           </button>
         </div>
