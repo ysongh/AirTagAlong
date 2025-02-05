@@ -242,6 +242,36 @@ app.post('/getmatchingtraveler', async (req, res) => {
   }
 });
 
+app.get('/allevents', async (req, res) => {
+  try {
+    const collection = new SecretVaultWrapper(
+      orgConfig.nodes,
+      orgConfig.orgCredentials,
+      SCHEMA_ID
+    );
+    await collection.init();
+
+    const decryptedCollectionData = await collection.readFromNodes({});
+
+    const events = {};
+
+    for(let data of decryptedCollectionData){
+      events[data.name] = (events[data.name] || 0) + 1;
+    }
+
+    const arr = Object.entries(events).map(([key, value]) => ({
+      id: key,
+      numberOfTravlers: value,
+      ...value
+    }));
+   
+    res.json({ events: arr });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.get('/', (req, res) => res.send('It Work'));
 
 // Error handling middleware
