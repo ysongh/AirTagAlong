@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import TravelerList from './pages/TravelerList';
 import TravelForm from "./pages/TravelForm";
 import EventList from './pages/EventList';
+import LandingPage from './pages/LandingPage';
 
 function App() {
 
@@ -18,8 +19,11 @@ function App() {
           path="/travellist"
           element={<TravelerList />} />
         <Route
-          path="/"
+          path="/eventlist"
           element={<EventList />} />
+        <Route
+          path="/"
+          element={<LandingPage />} />
       </Routes>
     </HashRouter>
   )
