@@ -215,6 +215,33 @@ app.get('/getmatchingtraveler', async (req, res) => {
   }
 });
 
+app.post('/getmatchingtraveler', async (req, res) => {
+  const { model } = await initializeGemini();
+
+  try {
+    const userPrompt = req.body.prompt;
+    const collection = new SecretVaultWrapper(
+      orgConfig.nodes,
+      orgConfig.orgCredentials,
+      SCHEMA_ID
+    );
+    await collection.init();
+
+    const decryptedCollectionData = await collection.readFromNodes({});
+    const formattedData = JSON.stringify(decryptedCollectionData, null, 2);
+
+    const prompt = `${userPrompt} based on this list: ${formattedData}. Return the result as array of object`;
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    console.log(response.text());
+    
+    res.json({ data: response.text() });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.get('/', (req, res) => res.send('It Work'));
 
 // Error handling middleware
