@@ -271,6 +271,35 @@ app.get('/allevents', async (req, res) => {
   }
 });
 
+app.delete('/deleterecord/:id', async (req, res) => {
+  try {
+    const recordID = req.params.id;
+
+    const collection = new SecretVaultWrapper(
+      orgConfig.nodes,
+      orgConfig.orgCredentials,
+      process.env.SCHEMA_ID
+    );
+    await collection.init();
+
+    const filterById = {
+      _id: recordID,
+    };
+
+    const readOriginalRecord = await collection.readFromNodes(filterById);
+    console.log('📚 Read original record:', readOriginalRecord);
+
+    const deletedData = await collection.deleteDataFromNodes(filterById);
+    console.log('📚 Deleted record from all nodes:', deletedData);
+
+    res.json({ deletedData });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 app.get('/', (req, res) => res.send('It Work'));
 
 // Error handling middleware
