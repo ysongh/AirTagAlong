@@ -299,6 +299,51 @@ app.delete('/deleterecord/:id', async (req, res) => {
   }
 });
 
+app.get('/editrecord/:id', async (req, res) => {
+  try {
+    const recordUpdate = {
+      event_name: { $allot: 'Hackathon' },
+      travel_date: { $allot: '02/04/2025' },
+      departure_airport: { $allot: 'John F. Kennedy International' },
+      destination: { $allot: 'London Heathrow' },
+      additional_note:  { $allot: "I like to read book" },
+    };
+
+    const recordID = req.params.id;
+
+    const collection = new SecretVaultWrapper(
+      orgConfig.nodes,
+      orgConfig.orgCredentials,
+      process.env.SCHEMA_ID
+    );
+    await collection.init();
+
+    const filterById = {
+      _id: recordID,
+    };
+
+    const readOriginalRecord = await collection.readFromNodes(filterById);
+    console.log('📚 Read original record:', readOriginalRecord);
+
+    const updatedData = await collection.updateDataToNodes(
+      recordUpdate,
+      filterById
+    );
+
+    console.log(
+      '📚 Find record(s) with filter and update nodes with recordUpdate:',
+      updatedData.map((n) => n.result.data)
+    );
+
+    const readUpdatedRecord = await collection.readFromNodes(filterById);
+    console.log('📚 Read updated record:', readUpdatedRecord);
+
+    res.json({ readUpdatedRecord });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
 
 app.get('/', (req, res) => res.send('It Work'));
 
