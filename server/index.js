@@ -37,7 +37,25 @@ app.get('/test/gemini', async (req, res) => {
   const { model } = await initializeGemini();
 
   try {
-    const prompt = 'Write a short poem about artificial intelligence.';
+    const prompt = 'What is the longitude and latitude of John F. Kennedy International';
+    const result = await model.generateContent(prompt);
+    const response = result.response;
+    console.log(response.text());
+
+    res.json({ text: response.text() });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/chechissafe/gemini', async (req, res) => {
+  const { model } = await initializeGemini();
+
+  const content = req.body.content;
+
+  try {
+    const prompt = `Is this address real? ${content}`;
     const result = await model.generateContent(prompt);
     const response = result.response;
     console.log(response.text());
