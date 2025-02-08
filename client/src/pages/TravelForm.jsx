@@ -2,13 +2,6 @@ import React from 'react';
 import { Calendar, Plane, MapPin, Ticket } from 'lucide-react';
 
 const TravelForm = () => {
-  const airports = [
-    { code: 'JFK', name: 'John F. Kennedy International' },
-    { code: 'LAX', name: 'Los Angeles International' },
-    { code: 'ORD', name: 'O\'Hare International' },
-    { code: 'LHR', name: 'London Heathrow' },
-  ];
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -75,18 +68,13 @@ const TravelForm = () => {
             <Plane className="w-4 h-4 mr-2" />
             Departure Airport
           </label>
-          <select
+          <input
             id="departure_airport"
+            type="text"
+            placeholder="Enter airport code or name"
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             required
-          >
-            <option value="">Select an airport</option>
-            {airports.map((airport) => (
-              <option key={airport.code} value={airport.code}>
-                {airport.code} - {airport.name}
-              </option>
-            ))}
-          </select>
+          />
         </div>
 
         <div className="space-y-2">
@@ -94,18 +82,13 @@ const TravelForm = () => {
             <MapPin className="w-4 h-4 mr-2" />
             Destination
           </label>
-          <select
+          <input
             id="destination"
+            type="text"
+            placeholder="Enter destination airport code or name"
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             required
-          >
-            <option value="">Select an airport</option>
-            {airports.map((airport) => (
-              <option key={airport.code} value={airport.code}>
-                {airport.code} - {airport.name}
-              </option>
-            ))}
-          </select>
+          />
         </div>
 
         <div className="space-y-2">
