@@ -1,9 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Calendar, Plane, MapPin, Ticket } from 'lucide-react';
 
+import Spinner from '../components/Spinner';
+
 const TravelForm = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const [msg, setmsg] = useState("");
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
+    setmsg("")
 
     const formData = {
       event_name: e.target.event_name.value,
@@ -25,8 +32,14 @@ const TravelForm = () => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
+
+      setIsLoading(false);
+      setmsg("Post succesful")
     } catch (error) {
       console.error(error.message);
+      setmsg("Something went wrong")
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -103,12 +116,22 @@ const TravelForm = () => {
           />
         </div>
 
-        <button
+       <button
           type="submit"
-          className="w-full py-2 px-4 bg-blue-600 text-white rounded-md cursor-pointer hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+          disabled={isLoading}
+          className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-blue-400 disabled:cursor-not-allowed flex items-center justify-center"
         >
-          Post
+          {isLoading ? (
+            <>
+              <Spinner />
+              <span className="ml-2">Searching...</span>
+            </>
+          ) : (
+            'Post'
+          )}
         </button>
+
+        <p>{msg}</p>
       </form>
     </div>
   );
