@@ -138,7 +138,7 @@ const TravelForm = () => {
           {isLoading ? (
             <>
               <Spinner />
-              <span className="ml-2">Searching...</span>
+              <span className="ml-2">Posting...</span>
             </>
           ) : (
             'Post'

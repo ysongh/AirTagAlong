@@ -14,6 +14,7 @@ const Navbar = () => {
     { name: 'Events', href: '/eventlist' },
     { name: 'Travelers', href: '/travellist' },
     { name: 'Travel Form', href: '/travelform' },
+    { name: 'Event Form', href: '/eventform' },
   ];
 
   return (
