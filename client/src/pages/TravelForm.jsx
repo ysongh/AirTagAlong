@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Plane, MapPin, Ticket } from 'lucide-react';
+import { Calendar, Plane, MapPin, Ticket, DoorOpen } from 'lucide-react';
 
 import Spinner from '../components/Spinner';
 
@@ -17,6 +17,7 @@ const TravelForm = () => {
       travel_date: e.target.travel_date.value,
       departure_airport: e.target.departure_airport.value,
       destination: e.target.destination.value,
+      gate_number: e.target.gate_number.value,
       additional_note:  e.target.additional_note.value,
     };
 
@@ -101,6 +102,19 @@ const TravelForm = () => {
             placeholder="Enter destination airport code or name"
             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
             required
+          />
+        </div>
+
+        <div className="space-y-2">
+          <label className="flex items-center text-sm font-medium text-gray-700">
+            <DoorOpen className="w-4 h-4 mr-2" />
+            Gate Number
+          </label>
+          <input
+            id="gate_number"
+            type="text"
+            placeholder="Enter gate number"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           />
         </div>
 

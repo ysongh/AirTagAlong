@@ -147,6 +147,7 @@ app.post('/storedata', async (req, res) => {
   const travel_date = req.body.travel_date;
   const departure_airport = req.body.departure_airport;
   const destination = req.body.destination;
+  const gate_number = req.body.gate_number;
   const additional_note = req.body.additional_note;
   try {
     const data = [
@@ -155,6 +156,7 @@ app.post('/storedata', async (req, res) => {
         travel_date: { $allot: travel_date },
         departure_airport: { $allot: departure_airport },
         destination: { $allot: destination },
+        gate_number: { $allot: gate_number },
         additional_note:  { $allot: additional_note },
       },
     ];

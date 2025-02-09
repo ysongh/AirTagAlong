@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Plane, Calendar, Mail, MessageCircle, Loader, Send } from 'lucide-react';
+import { Plane, Calendar, Mail, MessageCircle, Loader, Send, DoorOpen } from 'lucide-react';
 
 const TravelerList = () => {
   const [prompt, setPrompt] = useState('');
@@ -108,6 +108,10 @@ const TravelerList = () => {
                   <div className="flex items-center text-sm text-gray-600">
                     <Plane className="w-4 h-4 mr-2" />
                     {traveler.departure_airport} → {traveler.destination}
+                  </div>
+                  <div className="flex items-center text-sm text-gray-600">
+                    <DoorOpen className="w-4 h-4 mr-2" />
+                    Gate Number: {traveler.gate_number}
                   </div>
                   <p className="text-sm text-gray-600 mt-2">{traveler.additional_note}</p>
                 </div>

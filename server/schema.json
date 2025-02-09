@@ -45,6 +45,15 @@
         },
         "required": ["$share"]
       },
+      "gate_number": {
+        "type": "object",
+        "properties": {
+          "$share": {
+            "type": "string"
+          }
+        },
+        "required": ["$share"]
+      },
       "additional_note": {
         "type": "object",
         "properties": {
