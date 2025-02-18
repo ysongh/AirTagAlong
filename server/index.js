@@ -3,7 +3,6 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import pkg from 'body-parser';
 import { SecretVaultWrapper } from 'nillion-sv-wrappers';
-import { v4 as uuidv4 } from 'uuid';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { orgConfig } from './nillionOrgConfig.js';
 
