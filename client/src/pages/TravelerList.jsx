@@ -98,7 +98,7 @@ const TravelerList = () => {
             <div className="flex items-start gap-4">  
               {/* Traveler Details */}
               <div className="flex-1">
-                <h3 className="text-lg font-semibold text-gray-800">{traveler.name}</h3>
+                <h3 className="text-lg font-semibold text-gray-800">{traveler.event_name}</h3>
                 
                 <div className="mt-2 space-y-2">
                   <div className="flex items-center text-sm text-gray-600">
