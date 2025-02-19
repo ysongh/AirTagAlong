@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Calendar, Plane, MapPin, Ticket, DoorOpen } from 'lucide-react';
 
 import Spinner from '../components/Spinner';
+import ProgressBar from '../components/travelform/ProgressBar';
 
 const TravelForm = () => {
+  const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [msg, setmsg] = useState("");
 
@@ -49,6 +51,8 @@ const TravelForm = () => {
       <div className="mb-6 text-center">
         <h2 className="text-2xl font-bold text-gray-800">Post Plan</h2>
       </div>
+
+      <ProgressBar step={step} />
       
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-2">
