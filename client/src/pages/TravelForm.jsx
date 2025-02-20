@@ -36,8 +36,7 @@ const TravelForm = () => {
     setStep(prev => Math.max(prev - 1, 1));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
     setIsLoading(true);
     setmsg("")
 
@@ -194,7 +193,7 @@ const TravelForm = () => {
 
       <ProgressBar step={step} />
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form className="space-y-6">
         {renderStep()}
 
         <div className="flex justify-between space-x-4 mt-8">
@@ -220,9 +219,9 @@ const TravelForm = () => {
             </button>
           ) : (
             <button
-              type="submit"
+              onClick={handleSubmit}
               disabled={isLoading}
-              className="flex items-center ml-auto px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-blue-400 disabled:cursor-not-allowed"
+              className="flex items-center ml-auto px-4 py-2 cursor-pointer bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-blue-400 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <>
