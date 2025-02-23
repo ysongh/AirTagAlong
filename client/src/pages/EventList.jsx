@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Calendar, Users } from 'lucide-react';
 
 const EventList = () => {
+  const navigate = useNavigate();
+
   const [events, setEvents] = useState([]);
 
    useEffect(() => {
@@ -67,7 +70,10 @@ const EventList = () => {
                 <span>{event.numberOfTravlers} travelers</span>
               </div>
 
-              <button className="w-full mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
+              <button
+                className="w-full cursor-pointer mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+                onClick={() => navigate(`/eventwithtravelerlist/${event.id}`)}
+              >
                 View Details
               </button>
             </div>

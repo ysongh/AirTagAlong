@@ -6,6 +6,7 @@ import TravelForm from "./pages/TravelForm";
 import EventList from './pages/EventList';
 import LandingPage from './pages/LandingPage';
 import EventForm from './pages/EventForm';
+import EventWithTravelerList from './pages/EventWithTravelerList';
 
 function App() {
 
@@ -13,6 +14,9 @@ function App() {
     <HashRouter>
       <Navbar />
       <Routes>
+        <Route
+          path="/eventwithtravelerlist/:eventname"
+          element={<EventWithTravelerList />} />
         <Route
           path="/travelform"
           element={<TravelForm />} />
