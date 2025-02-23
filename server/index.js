@@ -364,6 +364,27 @@ app.get('/editrecord/:id', async (req, res) => {
   }
 });
 
+app.get('/getalltravelersbyeventname/:eventname', async (req, res) => {
+  try {
+    const eventname = req.params.eventname;
+
+    const collection = new SecretVaultWrapper(
+      orgConfig.nodes,
+      orgConfig.orgCredentials,
+      process.env.SCHEMA_ID
+    );
+    await collection.init();
+
+    const decryptedCollectionData = await collection.readFromNodes({});
+    const travelers = decryptedCollectionData.filter(event => event.event_name === eventname);
+
+    res.json({ travelers });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.get('/', (req, res) => res.send('It Work'));
 
 // Error handling middleware
