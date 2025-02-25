@@ -27,6 +27,17 @@ async function initializeGemini() {
   return { model, multimodalModel };
 }
 
+// Create a secret vault wrapper and initialize the SecretVault collection to use
+async function initializeSecretVaultCollection(){
+  const collection = new SecretVaultWrapper(
+    orgConfig.nodes,
+    orgConfig.orgCredentials,
+    process.env.SCHEMA_ID
+  );
+  await collection.init();
+  return collection;
+}
+
 app.use(cors());
 
 // Middleware for parsing JSON bodies
@@ -113,13 +124,7 @@ app.get('/storedata', async (req, res) => {
       },
     ];
 
-    // Create a secret vault wrapper and initialize the SecretVault collection to use
-    const collection = new SecretVaultWrapper(
-      orgConfig.nodes,
-      orgConfig.orgCredentials,
-      process.env.SCHEMA_ID
-    );
-    await collection.init();
+    const collection = await initializeSecretVaultCollection();
 
     // Write collection data to nodes encrypting the specified fields ahead of time
     const dataWritten = await collection.writeToNodes(data);
@@ -160,13 +165,7 @@ app.post('/storedata', async (req, res) => {
       },
     ];
 
-    // Create a secret vault wrapper and initialize the SecretVault collection to use
-    const collection = new SecretVaultWrapper(
-      orgConfig.nodes,
-      orgConfig.orgCredentials,
-      process.env.SCHEMA_ID
-    );
-    await collection.init();
+    const collection = await initializeSecretVaultCollection();
 
     // Write collection data to nodes encrypting the specified fields ahead of time
     const dataWritten = await collection.writeToNodes(data);
@@ -190,12 +189,7 @@ app.post('/storedata', async (req, res) => {
 
 app.get('/readdata', async (req, res) => {
   try {
-    const collection = new SecretVaultWrapper(
-      orgConfig.nodes,
-      orgConfig.orgCredentials,
-      process.env.SCHEMA_ID
-    );
-    await collection.init();
+    const collection = await initializeSecretVaultCollection();
 
     // Read all collection data from the nodes, decrypting the specified fields
     const decryptedCollectionData = await collection.readFromNodes({});
@@ -211,12 +205,7 @@ app.get('/getmatchingtraveler', async (req, res) => {
   const { model } = await initializeGemini();
 
   try {
-    const collection = new SecretVaultWrapper(
-      orgConfig.nodes,
-      orgConfig.orgCredentials,
-      process.env.SCHEMA_ID
-    );
-    await collection.init();
+    const collection = await initializeSecretVaultCollection();
 
     const decryptedCollectionData = await collection.readFromNodes({});
     const formattedData = JSON.stringify(decryptedCollectionData, null, 2);
@@ -238,12 +227,7 @@ app.post('/getmatchingtraveler', async (req, res) => {
 
   try {
     const userPrompt = req.body.prompt;
-    const collection = new SecretVaultWrapper(
-      orgConfig.nodes,
-      orgConfig.orgCredentials,
-      process.env.SCHEMA_ID
-    );
-    await collection.init();
+    const collection = await initializeSecretVaultCollection();
 
     const decryptedCollectionData = await collection.readFromNodes({});
     const formattedData = JSON.stringify(decryptedCollectionData, null, 2);
@@ -262,12 +246,7 @@ app.post('/getmatchingtraveler', async (req, res) => {
 
 app.get('/allevents', async (req, res) => {
   try {
-    const collection = new SecretVaultWrapper(
-      orgConfig.nodes,
-      orgConfig.orgCredentials,
-      process.env.SCHEMA_ID
-    );
-    await collection.init();
+    const collection = await initializeSecretVaultCollection();
 
     const decryptedCollectionData = await collection.readFromNodes({});
 
@@ -294,12 +273,7 @@ app.delete('/deleterecord/:id', async (req, res) => {
   try {
     const recordID = req.params.id;
 
-    const collection = new SecretVaultWrapper(
-      orgConfig.nodes,
-      orgConfig.orgCredentials,
-      process.env.SCHEMA_ID
-    );
-    await collection.init();
+    const collection = await initializeSecretVaultCollection();
 
     const filterById = {
       _id: recordID,
@@ -330,12 +304,7 @@ app.get('/editrecord/:id', async (req, res) => {
 
     const recordID = req.params.id;
 
-    const collection = new SecretVaultWrapper(
-      orgConfig.nodes,
-      orgConfig.orgCredentials,
-      process.env.SCHEMA_ID
-    );
-    await collection.init();
+    const collection = await initializeSecretVaultCollection();
 
     const filterById = {
       _id: recordID,
@@ -368,12 +337,7 @@ app.get('/getalltravelersbyeventname/:eventname', async (req, res) => {
   try {
     const eventname = req.params.eventname;
 
-    const collection = new SecretVaultWrapper(
-      orgConfig.nodes,
-      orgConfig.orgCredentials,
-      process.env.SCHEMA_ID
-    );
-    await collection.init();
+    const collection = await initializeSecretVaultCollection();
 
     const decryptedCollectionData = await collection.readFromNodes({});
     const travelers = decryptedCollectionData.filter(event => event.event_name === eventname);
