@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 
 const Navbar = () => {
@@ -29,13 +29,13 @@ const Navbar = () => {
 
           <div className="hidden md:flex space-x-8">
             {navItems.map((item) => (
-              <Link
+              <NavLink
                 key={item.name}
                 to={item.href}
                 className="text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium"
               >
                 {item.name}
-              </Link>
+              </NavLink>
             ))}
           </div>
 
@@ -58,13 +58,13 @@ const Navbar = () => {
         <div className="md:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
             {navItems.map((item) => (
-              <Link
+              <NavLink
                 key={item.name}
                 to={item.href}
                 className="text-gray-600 hover:text-gray-900 block px-3 py-2 rounded-md text-base font-medium"
               >
                 {item.name}
-              </Link>
+              </NavLink>
             ))}
           </div>
         </div>
