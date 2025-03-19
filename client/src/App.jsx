@@ -5,7 +5,6 @@ import TravelerList from './pages/TravelerList';
 import TravelForm from "./pages/TravelForm";
 import EventList from './pages/EventList';
 import LandingPage from './pages/LandingPage';
-import EventForm from './pages/EventForm';
 import EventWithTravelerList from './pages/EventWithTravelerList';
 
 function App() {
@@ -26,9 +25,6 @@ function App() {
         <Route
           path="/eventlist"
           element={<EventList />} />
-        <Route
-          path="/eventform"
-          element={<EventForm />} />
         <Route
           path="/"
           element={<LandingPage />} />
