@@ -1,4 +1,4 @@
-import { Plane, Calendar, Mail, MessageCircle, DoorOpen } from 'lucide-react';
+import { Plane, Calendar, DoorOpen } from 'lucide-react';
 
 function TravelerCard({ traveler }) {
   return (
@@ -21,17 +21,6 @@ function TravelerCard({ traveler }) {
           </div>
           <p className="text-sm text-gray-600 mt-2">{traveler.additional_note}</p>
         </div>
-      </div>
-
-      <div className="flex flex-col gap-2">
-        <button className="flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors">
-          <MessageCircle className="w-4 h-4" />
-          <span>Message</span>
-        </button>
-        <button className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors">
-          <Mail className="w-4 h-4" />
-          <span>Email</span>
-        </button>
       </div>
     </div>
   )
