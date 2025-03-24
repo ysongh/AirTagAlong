@@ -193,13 +193,12 @@ const TravelForm = () => {
 
       <ProgressBar step={step} />
 
-      <form className="space-y-6">
+      <div className="space-y-6">
         {renderStep()}
 
         <div className="flex justify-between space-x-4 mt-8">
           {step > 1 && (
             <button
-              type="button"
               onClick={handleBack}
               className="flex items-center px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
@@ -210,7 +209,6 @@ const TravelForm = () => {
           
           {step < totalSteps ? (
             <button
-              type="button"
               onClick={handleNext}
               className="flex items-center ml-auto px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
@@ -234,7 +232,7 @@ const TravelForm = () => {
             </button>
           )}
         </div>
-      </form>
+      </div>
     </div>
   );
 };
