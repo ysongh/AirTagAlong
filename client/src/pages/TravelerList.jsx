@@ -107,7 +107,7 @@ const TravelerList = () => {
   return (
     <div className="max-w-4xl mx-auto p-6">
       <div className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">Travelers List</h1>
+        <h1 className="text-2xl font-bold text-gray-800 mb-4">Search for Travelers</h1>
       </div>
 
       <div className="mb-8 bg-white rounded-lg shadow p-6">
