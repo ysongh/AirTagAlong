@@ -250,19 +250,21 @@ app.get('/allevents', async (req, res) => {
 
     const decryptedCollectionData = await collection.readFromNodes({});
 
-    const events = {};
+    const events = [];
+    const eventIDs = {};
 
     for(let data of decryptedCollectionData){
-      events[data.event_name] = (events[data.event_name] || 0) + 1;
+      if (eventIDs[data.event_name] === undefined) {
+        eventIDs[data.event_name] = events.length;
+        data.numberOfTravlers = 1;
+        events.push(data);
+      }
+      else {
+        events[eventIDs[data.event_name]].numberOfTravlers += 1;
+      }
     }
-
-    const arr = Object.entries(events).map(([key, value]) => ({
-      id: key,
-      numberOfTravlers: value,
-      ...value
-    }));
    
-    res.json({ events: arr });
+    res.json({ events });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: error.message });
