@@ -3,6 +3,7 @@ import { Calendar, Plane, MapPin, Ticket, DoorOpen, User, ArrowRight, ArrowLeft 
 
 import Spinner from '../components/Spinner';
 import ProgressBar from '../components/travelform/ProgressBar';
+import { SERVER_URL } from '../config';
 
 const totalSteps = 3;
 
@@ -43,7 +44,7 @@ const TravelForm = () => {
     console.log(formData)
 
     try {
-      const response = await fetch('http://localhost:4000/storedata', {
+      const response = await fetch(`${SERVER_URL}/storedata`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

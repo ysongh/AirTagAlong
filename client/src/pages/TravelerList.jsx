@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Loader, Send, ChevronLeft, ChevronRight } from 'lucide-react';
 
 import TravelerCard from '../components/TravelerCard';
+import { SERVER_URL } from '../config';
 
 const TravelerList = () => {
   const [prompt, setPrompt] = useState('');
@@ -22,7 +23,7 @@ const TravelerList = () => {
   
   const getTravelList = async () => {
     try {
-      const response = await fetch('http://localhost:4000/readdata');
+      const response = await fetch(`${SERVER_URL}/readdata`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -41,7 +42,7 @@ const TravelerList = () => {
     try {
 
       setIsLoading(true);
-      const response = await fetch('http://localhost:4000/getmatchingtraveler', {
+      const response = await fetch(`${SERVER_URL}/getmatchingtraveler`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
