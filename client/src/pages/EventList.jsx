@@ -60,7 +60,7 @@ const EventList = () => {
               <div className="flex items-center text-blue-600 mb-4">
                 <Calendar className="w-5 h-5 mr-2" />
                 <span className="font-medium">
-                  {event.id}
+                  {event.event_name}
                 </span>
               </div>
 
@@ -72,7 +72,7 @@ const EventList = () => {
 
               <button
                 className="w-full cursor-pointer mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                onClick={() => navigate(`/eventwithtravelerlist/${event.id}`)}
+                onClick={() => navigate(`/eventwithtravelerlist/${event.event_name}`)}
               >
                 View Details
               </button>
