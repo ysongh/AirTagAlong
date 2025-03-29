@@ -251,18 +251,36 @@ app.get('/allevents', async (req, res) => {
     const decryptedCollectionData = await collection.readFromNodes({});
 
     const events = [];
-    const eventIDs = {};
 
-    for(let data of decryptedCollectionData){
-      if (eventIDs[data.event_name] === undefined) {
-        eventIDs[data.event_name] = events.length;
-        data.numberOfTravlers = 1;
-        events.push(data);
+    decryptedCollectionData.forEach(entry => {
+      if (!entry.event_name) return;
+      
+      const existingEventIndex = events.findIndex(event => 
+        event.event_name === entry.event_name
+      );
+      
+      if (existingEventIndex === -1) {
+        const newEvent = {
+          event_name: entry.event_name,
+          travel_dates: [entry.travel_date],
+          departure_airports: [entry.departure_airport],
+          travelers: entry.numberOfTravlers || 1
+        };
+        events.push(newEvent);
+      } else {
+        const existingEvent = events[existingEventIndex];
+        
+        if (entry.travel_date && !existingEvent.travel_dates.includes(entry.travel_date)) {
+          existingEvent.travel_dates.push(entry.travel_date);
+        }
+        
+        if (entry.departure_airport && !existingEvent.departure_airports.includes(entry.departure_airport)) {
+          existingEvent.departure_airports.push(entry.departure_airport);
+        }
+        
+        existingEvent.travelers += entry.numberOfTravlers || 1;
       }
-      else {
-        events[eventIDs[data.event_name]].numberOfTravlers += 1;
-      }
-    }
+    });
    
     res.json({ events });
   } catch (error) {
