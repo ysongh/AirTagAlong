@@ -289,6 +289,58 @@ app.get('/allevents', async (req, res) => {
   }
 });
 
+app.get('/allevents/future', async (req, res) => {
+  try {
+    const collection = await initializeSecretVaultCollection();
+
+    const decryptedCollectionData = await collection.readFromNodes({});
+
+    const events = [];
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    decryptedCollectionData.forEach(entry => {
+      if (!entry.event_name || !entry.travel_date) return;
+      
+      const travelDate = new Date(entry.travel_date);
+      
+      if (travelDate < today) return;
+      
+      const existingEventIndex = events.findIndex(event => 
+        event.event_name === entry.event_name
+      );
+      
+      if (existingEventIndex === -1) {
+        const newEvent = {
+          event_name: entry.event_name,
+          travel_dates: [entry.travel_date],
+          destinations: [entry.destination],
+          travelers: entry.numberOfTravlers || 1
+        };
+        events.push(newEvent);
+      } else {
+        const existingEvent = events[existingEventIndex];
+        
+        if (!existingEvent.travel_dates.includes(entry.travel_date)) {
+          existingEvent.travel_dates.push(entry.travel_date);
+        }
+        
+        if (entry.destination && !existingEvent.destinations.includes(entry.destination)) {
+          existingEvent.destinations.push(entry.destination);
+        }
+        
+        existingEvent.travelers += entry.numberOfTravlers || 1;
+      }
+    });
+   
+    res.json({ events });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.delete('/deleterecord/:id', async (req, res) => {
   try {
     const recordID = req.params.id;

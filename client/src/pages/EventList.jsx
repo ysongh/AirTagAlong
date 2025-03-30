@@ -10,25 +10,25 @@ const EventList = () => {
   const [events, setEvents] = useState([]);
 
    useEffect(() => {
-      getEvents();
-    }, [])
-    
-    const getEvents = async () => {
-      try {
-        const response = await fetch(`${SERVER_URL}/allevents`);
+    getEvents();
+  }, [])
   
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-  
-        const result = await response.json();
-        console.log(result.events);
-        setEvents(result.events);
-        // setData(result);
-      } catch (error) {
-        console.error(error.message);
+  const getEvents = async () => {
+    try {
+      const response = await fetch(`${SERVER_URL}/allevents`);
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-    };
+
+      const result = await response.json();
+      console.log(result.events);
+      setEvents(result.events);
+      // setData(result);
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
 
   return (
     <div className="max-w-6xl mx-auto p-6">
