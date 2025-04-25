@@ -6,7 +6,7 @@ import { SecretVaultWrapper } from 'nillion-sv-wrappers';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { orgConfig } from './nillionOrgConfig.js';
 
-import schema from './schema.json' assert { type: 'json' };
+// import schema from './schema.json' assert { type: 'json' };
 
 // Load environment variables from .env file
 dotenv.config();
@@ -95,23 +95,23 @@ app.get('/generate/apitokens', async (req, res) => {
   }
 });
 
-app.get('/create/schema', async (req, res) => {
-  try {
-    const org = new SecretVaultWrapper(
-      orgConfig.nodes,
-      orgConfig.orgCredentials
-    );
-    await org.init();
+// app.get('/create/schema', async (req, res) => {
+//   try {
+//     const org = new SecretVaultWrapper(
+//       orgConfig.nodes,
+//       orgConfig.orgCredentials
+//     );
+//     await org.init();
 
-    // create a new collectionschema
-    const newSchema = await org.createSchema(schema, 'Air Tag Along');
+//     // create a new collectionschema
+//     const newSchema = await org.createSchema(schema, 'Air Tag Along');
 
-    res.json({ newSchema, SchemaID: newSchema[0].result.data });
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
+//     res.json({ newSchema, SchemaID: newSchema[0].result.data });
+//   } catch (error) {
+//     console.error('Error:', error);
+//     res.status(500).json({ error: error.message });
+//   }
+// });
 
 app.get('/storedata', async (req, res) => {
   try {
