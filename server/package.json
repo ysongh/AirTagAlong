@@ -21,6 +21,6 @@
     "nillion-sv-wrappers": "^1.0.8"
   },
   "engines": {
-    "node": "18.x"
+    "node": ">=20.0.0"
   }
 }
