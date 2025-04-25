@@ -19,5 +19,8 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "nillion-sv-wrappers": "^1.0.8"
+  },
+  "engines": {
+    "node": "18.x"
   }
 }
