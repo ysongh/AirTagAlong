@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import pkg from 'body-parser';
-import { SecretVaultWrapper } from 'nillion-sv-wrappers';
+import { SecretVaultWrapper } from 'secretvaults';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { orgConfig } from './nillionOrgConfig.js';
 
