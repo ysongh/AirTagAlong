@@ -106,7 +106,7 @@ app.get('/create/schema', async (req, res) => {
     // create a new collectionschema
     const newSchema = await org.createSchema(schema, 'Air Tag Along');
 
-    res.json({ newSchema, SchemaID: newSchema[0].result.data });
+    res.json({ newSchema });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: error.message });
