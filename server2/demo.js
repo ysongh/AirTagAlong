@@ -32,7 +32,36 @@ if (!config.BUILDER_PRIVATE_KEY) {
 }
 
 async function main() {
-  // All code in the next steps will be added here
+  // Create keypairs for builder and user
+  const builderKeypair = Keypair.from(config.BUILDER_PRIVATE_KEY); // Use your funded key
+  const userKeypair = Keypair.generate(); // Generate random user
+
+  const builderDid = builderKeypair.toDid().toString();
+  const userDid = userKeypair.toDid().toString();
+
+  console.log('Builder DID:', builderDid);
+  console.log('User DID:', userDid);
+
+  // Create payer and nilauth client
+  const payer = await new PayerBuilder()
+    .keypair(builderKeypair)
+    .chainUrl(config.NILCHAIN_URL)
+    .build();
+
+  const nilauth = await NilauthClient.from(config.NILAUTH_URL, payer);
+
+  // Create builder client
+  const builder = await SecretVaultBuilderClient.from({
+    keypair: builderKeypair,
+    urls: {
+      chain: config.NILCHAIN_URL,
+      auth: config.NILAUTH_URL,
+      dbs: config.NILDB_NODES,
+    },
+  });
+
+  // Refresh token using existing subscription
+  await builder.refreshRootToken();
 }
 
 main().catch(console.error);
