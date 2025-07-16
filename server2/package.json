@@ -12,6 +12,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@nillion/nuc": "^0.1.0",
+    "@nillion/secretvaults": "0.1.0-rc.5",
     "body-parser": "^2.2.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.0",
