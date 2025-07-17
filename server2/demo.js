@@ -62,6 +62,27 @@ async function main() {
 
   // Refresh token using existing subscription
   await builder.refreshRootToken();
+
+  // Register builder (handle existing registration)
+  try {
+    const existingProfile = await builder.readProfile();
+    console.log('✅ Builder already registered:', existingProfile.data.name);
+  } catch (profileError) {
+    try {
+      await builder.register({
+        did: builderDid,
+        name: 'My Demo Builder',
+      });
+      console.log('✅ Builder registered successfully');
+    } catch (registerError) {
+      // Handle duplicate key errors gracefully
+      if (registerError.message.includes('duplicate key')) {
+        console.log('✅ Builder already registered (duplicate key)');
+      } else {
+        throw registerError;
+      }
+    }
+  }
 }
 
 main().catch(console.error);
