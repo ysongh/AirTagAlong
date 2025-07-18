@@ -83,6 +83,30 @@ async function main() {
       }
     }
   }
+
+  // Define collection
+  const collectionId = randomUUID();
+
+  const collection = {
+    _id: collectionId,
+    type: 'owned', // Every document in the collection will be user-owned
+    name: 'User Profile Collection',
+    schema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'array',
+      uniqueItems: true,
+      items: {
+        type: 'object',
+        properties: {
+          _id: { type: 'string', format: 'uuid' },
+          name: { type: 'string' },
+          email: { type: 'string', format: 'email' },
+          phone: { type: 'string' },
+        },
+        required: ['_id', 'name', 'email'],
+      },
+    },
+  };
 }
 
 main().catch(console.error);
