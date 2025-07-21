@@ -120,6 +120,12 @@ async function main() {
     console.error('❌ Collection creation failed:', error.message);
     // Handle testnet infrastructure issues gracefully
   }
+
+  // Create user client
+  const user = await SecretVaultUserClient.from({
+    baseUrls: config.NILDB_NODES,
+    keypair: userKeypair,
+  });
 }
 
 main().catch(console.error);
