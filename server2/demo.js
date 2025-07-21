@@ -107,6 +107,19 @@ async function main() {
       },
     },
   };
+
+  // Create the owned collection
+  try {
+    const createResults = await builder.createCollection(collection);
+    console.log(
+      '✅ Owned collection created on',
+      Object.keys(createResults).length,
+      'nodes'
+    );
+  } catch (error) {
+    console.error('❌ Collection creation failed:', error.message);
+    // Handle testnet infrastructure issues gracefully
+  }
 }
 
 main().catch(console.error);
