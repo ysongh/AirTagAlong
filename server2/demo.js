@@ -126,6 +126,41 @@ async function main() {
     baseUrls: config.NILDB_NODES,
     keypair: userKeypair,
   });
+
+  // Builder grants write access to the user
+  const delegation = NucTokenBuilder.extending(builder.rootToken)
+    .command(new Command(['nil', 'db', 'data', 'create']))
+    .audience(userKeypair.toDid())
+    .expiresAt(Math.floor(Date.now() / 1000) + 3600) // 1 hour
+    .build(builderKeypair.privateKey());
+
+  // User's private data
+  // %allot indicates that the client should encrypt this data
+  const userPrivateData = {
+    _id: randomUUID(),
+    name: "Coder",
+    email: {
+      "%allot": "coder@example.com"
+    },
+    phone: {
+      "%allot": "+1-555-0123"
+    },
+  };
+
+  // User uploads data and grants builder limited access
+  const uploadResults = await user.createData(delegation, {
+    owner: userDid,
+    acl: {
+      grantee: builderDid, // Grant access to the builder
+      read: true, // Builder can read the data
+      write: false, // Builder cannot modify the data
+      execute: true, // Builder can run queries on the data
+    },
+    collection: collectionId,
+    data: [userPrivateData],
+  });
+
+  console.log('✅ User uploaded private data with builder access granted');
 }
 
 main().catch(console.error);
