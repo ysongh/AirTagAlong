@@ -147,6 +147,7 @@ async function main() {
     },
   };
 
+  /*
   // User uploads data and grants builder limited access
   const uploadResults = await user.createData(delegation, {
     owner: userDid,
@@ -161,6 +162,19 @@ async function main() {
   });
 
   console.log('✅ User uploaded private data with builder access granted');
+  */
+
+  // Builder reads user's data (only works because user granted access)
+  const userData = await user.readData({
+    collection: collectionId,
+    document: userPrivateData._id,
+  });
+
+  console.log('✅ Builder successfully accessed user data:', {
+    name: userData.data.name,
+    email: userData.data.email,
+    // Note: Builder can only see this because user granted read permission
+  });
 }
 
 main().catch(console.error);
