@@ -162,7 +162,6 @@ async function main() {
   });
 
   console.log('✅ User uploaded private data with builder access granted');
-  */
 
   // Builder reads user's data (only works because user granted access)
   const userData = await user.readData({
@@ -175,6 +174,11 @@ async function main() {
     email: userData.data.email,
     // Note: Builder can only see this because user granted read permission
   });
+  */
+
+  // See what data the user has stored
+  const references = await user.listDataReferences();
+  console.log('✅ User has', references.data.length, 'private records stored');
 }
 
 main().catch(console.error);
