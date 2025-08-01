@@ -87,6 +87,8 @@ async function main() {
   // Define collection
   const collectionId = randomUUID();
 
+  console.log('collectionId', collectionId);
+
   const collection = {
     _id: collectionId,
     type: 'owned', // Every document in the collection will be user-owned
@@ -100,10 +102,8 @@ async function main() {
         properties: {
           _id: { type: 'string', format: 'uuid' },
           name: { type: 'string' },
-          email: { type: 'string', format: 'email' },
-          phone: { type: 'string' },
         },
-        required: ['_id', 'name', 'email'],
+        required: ['_id', 'name'],
       },
     },
   };
@@ -139,15 +139,8 @@ async function main() {
   const userPrivateData = {
     _id: randomUUID(),
     name: "Coder",
-    email: {
-      "%allot": "coder@example.com"
-    },
-    phone: {
-      "%allot": "+1-555-0123"
-    },
   };
 
-  /*
   // User uploads data and grants builder limited access
   const uploadResults = await user.createData(delegation, {
     owner: userDid,
@@ -171,10 +164,8 @@ async function main() {
 
   console.log('✅ Builder successfully accessed user data:', {
     name: userData.data.name,
-    email: userData.data.email,
     // Note: Builder can only see this because user granted read permission
   });
-  */
 
   // See what data the user has stored
   const references = await user.listDataReferences();
