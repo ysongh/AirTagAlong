@@ -69,9 +69,9 @@ app.get('/getbuilderanduser', async (req, res) => {
     const builder = await SecretVaultBuilderClient.from({
         keypair: builderKeypair,
         urls: {
-        chain: config.NILCHAIN_URL,
-        auth: config.NILAUTH_URL,
-        dbs: config.NILDB_NODES,
+          chain: config.NILCHAIN_URL,
+          auth: config.NILAUTH_URL,
+          dbs: config.NILDB_NODES,
         },
     });
 
@@ -83,6 +83,41 @@ app.get('/getbuilderanduser', async (req, res) => {
         console.error('Error:', error);
         res.status(500).json({ error: error.message });
     }
+});
+
+// Register builder
+app.get('/registerbuilder', async (req, res) => {
+  try {
+    const builderKeypair = Keypair.from(config.BUILDER_PRIVATE_KEY);
+
+    const builder = await SecretVaultBuilderClient.from({
+      keypair: builderKeypair,
+      urls: {
+        chain: config.NILCHAIN_URL,
+        auth: config.NILAUTH_URL,
+        dbs: config.NILDB_NODES,
+      },
+    });
+
+    await builder.refreshRootToken();
+
+    const existingProfile = await builder.readProfile();
+    res.json({ msg: "Builder already registered:" + existingProfile.data.name });
+  } catch (profileError) {
+    try {
+      await builder.register({
+        did: builderDid,
+        name: 'My Demo Builder',
+      });
+      res.json({ msg: "Builder registered successfully" });
+    } catch (registerError) {
+      if (registerError.message.includes('duplicate key')) {
+         res.status(500).json({ error: "Builder already registered (duplicate key)" });
+      } else {
+        res.status(500).json({ error: registerError.message });
+      }
+    }
+  }
 });
 
 
