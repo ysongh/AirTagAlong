@@ -120,6 +120,57 @@ app.get('/registerbuilder', async (req, res) => {
   }
 });
 
+// Create collection
+app.get('/createcollection', async (req, res) => {
+  const collectionId = randomUUID();
+
+  const collection = {
+    _id: collectionId,
+    type: 'owned', // Every document in the collection will be user-owned
+    name: 'User Profile Collection',
+    schema: {
+      $schema: 'http://json-schema.org/draft-07/schema#',
+      type: 'array',
+      uniqueItems: true,
+      items: {
+        type: 'object',
+        properties: {
+          _id: { type: 'string', format: 'uuid' },
+          name: { type: 'string' },
+        },
+        required: ['_id', 'name'],
+      },
+    },
+  };
+
+  try {
+    const builderKeypair = Keypair.from(config.BUILDER_PRIVATE_KEY);
+
+    const builder = await SecretVaultBuilderClient.from({
+      keypair: builderKeypair,
+      urls: {
+        chain: config.NILCHAIN_URL,
+        auth: config.NILAUTH_URL,
+        dbs: config.NILDB_NODES,
+      },
+    });
+
+    await builder.refreshRootToken();
+
+    const createResults = await builder.createCollection(collection);
+    console.log(
+      '✅ Owned collection created on',
+      Object.keys(createResults).length,
+      'nodes'
+    );
+
+    res.json({ createResults });
+   } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: error.message });
+  }
+});
+
 
 app.get('/', (req, res) => res.send('It Work'));
 
