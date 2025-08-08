@@ -77,7 +77,7 @@ app.get('/getbuilderanduser', async (req, res) => {
 
     // Refresh token using existing subscription
     await builder.refreshRootToken();
-    res.json({ builderDid, userDid });
+    res.json({ builderDid, userDid, userKeypair });
 
     } catch (error) {
         console.error('Error:', error);
@@ -228,6 +228,27 @@ app.get('/upload/:collectionId', async (req, res) => {
     console.log('✅ User uploaded private data with builder access granted');
 
     res.json({ uploadResults, userPrivateData });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// List User's Data References
+app.get('/viewlist', async (req, res) => {
+  try {
+    const userKeypair = Keypair.generate();
+
+    // Create user client
+    const user = await SecretVaultUserClient.from({
+      baseUrls: config.NILDB_NODES,
+      keypair: userKeypair,
+    });
+
+    const references = await user.listDataReferences();
+    console.log('✅ User has', references.data.length, 'private records stored');
+
+    res.json({ references });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: error.message });
