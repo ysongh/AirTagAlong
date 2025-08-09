@@ -27,6 +27,7 @@ const config = {
   NILAUTH_URL: process.env.NILAUTH_URL,
   NILDB_NODES: process.env.NILDB_NODES.split(','),
   BUILDER_PRIVATE_KEY: process.env.BUILDER_PRIVATE_KEY,
+  USER_PRIVATE_KEY: process.env.USER_PRIVATE_KEY,
 };
 
 // Validate configuration
@@ -49,7 +50,7 @@ app.get('/getbuilderanduser', async (req, res) => {
   try {
 
     const builderKeypair = Keypair.from(config.BUILDER_PRIVATE_KEY); // Use your funded key
-    const userKeypair = Keypair.generate(); // Generate random user
+    const userKeypair = Keypair.from(config.USER_PRIVATE_KEY);
 
     const builderDid = builderKeypair.toDid().toString();
     const userDid = userKeypair.toDid().toString();
@@ -177,7 +178,7 @@ app.get('/upload/:collectionId', async (req, res) => {
 
   try {
     const builderKeypair = Keypair.from(config.BUILDER_PRIVATE_KEY);
-    const userKeypair = Keypair.generate();
+    const userKeypair = Keypair.from(config.USER_PRIVATE_KEY);
     const builderDid = builderKeypair.toDid().toString();
     const userDid = userKeypair.toDid().toString();
 
@@ -235,9 +236,40 @@ app.get('/upload/:collectionId', async (req, res) => {
 });
 
 // List User's Data References
+app.get('/readdata/:collectionId/:id', async (req, res) => {
+  const collectionId = req.params.collectionId;
+  const id = req.params.id;
+  try {
+    const userKeypair = Keypair.from(config.USER_PRIVATE_KEY);
+
+    // Create user client
+    const user = await SecretVaultUserClient.from({
+      baseUrls: config.NILDB_NODES,
+      keypair: userKeypair,
+    });
+
+    // Builder reads user's data (only works because user granted access)
+    const userData = await user.readData({
+      collection: collectionId,
+      document: id,
+    });
+
+    console.log('✅ Builder successfully accessed user data:', {
+      name: userData.data.name,
+      // Note: Builder can only see this because user granted read permission
+    });
+
+    res.json({ userData });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// List User's Data References
 app.get('/viewlist', async (req, res) => {
   try {
-    const userKeypair = Keypair.generate();
+    const userKeypair = Keypair.from(config.USER_PRIVATE_KEY);
 
     // Create user client
     const user = await SecretVaultUserClient.from({
