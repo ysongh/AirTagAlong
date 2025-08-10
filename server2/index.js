@@ -235,10 +235,11 @@ app.get('/upload/:collectionId', async (req, res) => {
   }
 });
 
-// List User's Data References
+// View user data 
 app.get('/readdata/:collectionId/:id', async (req, res) => {
   const collectionId = req.params.collectionId;
   const id = req.params.id;
+
   try {
     const userKeypair = Keypair.from(config.USER_PRIVATE_KEY);
 
@@ -281,6 +282,34 @@ app.get('/viewlist', async (req, res) => {
     console.log('✅ User has', references.data.length, 'private records stored');
 
     res.json({ references });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// User deletes their data
+app.get('/delete/:collectionId/:id', async (req, res) => {
+  const collectionId = req.params.collectionId;
+  const id = req.params.id;
+
+  try {
+    const userKeypair = Keypair.from(config.USER_PRIVATE_KEY);
+
+    const user = await SecretVaultUserClient.from({
+      baseUrls: config.NILDB_NODES,
+      keypair: userKeypair,
+    });
+
+    // Create user client
+    await user.deleteData({
+      collection: collectionId,
+      document: id
+    });
+
+    console.log('✅ User deleted their private data');
+
+    res.json({ msg: id + " is been deleted" });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: error.message });
