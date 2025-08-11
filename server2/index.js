@@ -288,6 +288,37 @@ app.get('/viewlist', async (req, res) => {
   }
 });
 
+// Grant Access to Another Builders
+app.get('/grantaccess/:collectionId/:id', async (req, res) => {
+  const collectionId = req.params.collectionId;
+  const id = req.params.id;
+
+  try {
+    const userKeypair = Keypair.from(config.USER_PRIVATE_KEY);
+
+    const user = await SecretVaultUserClient.from({
+      baseUrls: config.NILDB_NODES,
+      keypair: userKeypair,
+    });
+
+    await user.grantAccess({
+      collection: collectionId,
+      document: userPrivateData._id,
+      acl: {
+        grantee: "new-builder-did",
+        read: true, // New Builder can read
+        write: false, // New Builder cannot modify
+        execute: false, // New Builder cannot run queries
+      },
+    });
+
+    res.json({ msg: "Success" });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // User deletes their data
 app.get('/delete/:collectionId/:id', async (req, res) => {
   const collectionId = req.params.collectionId;
