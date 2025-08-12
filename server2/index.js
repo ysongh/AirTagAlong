@@ -137,9 +137,14 @@ app.get('/createcollection', async (req, res) => {
         type: 'object',
         properties: {
           _id: { type: 'string', format: 'uuid' },
-          name: { type: 'string' },
+          event_name: { type: 'string' },
+          travel_date: { type: 'string' },
+          departure_airport: { type: 'string' },
+          destination: { type: 'string' },
+          gate_number: { type: 'string' },
+          additional_note: { type: 'string' },
         },
-        required: ['_id', 'name'],
+        required: ['_id', 'event_name'],
       },
     },
   };
@@ -211,6 +216,12 @@ app.get('/upload/:collectionId', async (req, res) => {
     const userPrivateData = {
       _id: randomUUID(),
       name: "Coder",
+      event_name: 'Hackathon',
+      travel_date: '02/04/2025',
+      departure_airport: 'John F. Kennedy International',
+      destination: 'London Heathrow',
+      gate_number: '1',
+      additional_note: 'I like to read book'
     };
 
     // User uploads data and grants builder limited access
