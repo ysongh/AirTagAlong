@@ -2,8 +2,6 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, Users } from 'lucide-react';
 
-import { SERVER_URL } from '../config';
-
 const EventList = () => {
   const navigate = useNavigate();
 
@@ -15,7 +13,7 @@ const EventList = () => {
   
   const getEvents = async () => {
     try {
-      const response = await fetch(`${SERVER_URL}/allevents`);
+      const response = await fetch(`${import.meta.env.VITE_SERVERURL}/allevents`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

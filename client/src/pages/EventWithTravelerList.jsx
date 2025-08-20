@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 import TravelerCard from '../components/TravelerCard';
-import { SERVER_URL } from '../config';
 
 const EventWithTravelerList = () => {
   const { eventname } = useParams();
@@ -23,7 +22,7 @@ const EventWithTravelerList = () => {
   
   const getTravelList = async () => {
     try {
-      const response = await fetch(`${SERVER_URL}/getalltravelersbyeventname/${eventname}`);
+      const response = await fetch(`${import.meta.env.VITE_SERVERURL}/getalltravelersbyeventname/${eventname}`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
