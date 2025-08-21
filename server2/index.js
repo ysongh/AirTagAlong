@@ -246,6 +246,81 @@ app.get('/upload/:collectionId', async (req, res) => {
   }
 });
 
+app.post('/upload/:collectionId', async (req, res) => {
+  const collectionId = req.params.collectionId;
+  
+  const event_name = req.body.event_name;
+  const travel_date = req.body.travel_date;
+  const departure_airport = req.body.departure_airport;
+  const destination = req.body.destination;
+  const gate_number = req.body.gate_number;
+  const additional_note = req.body.additional_note;
+
+  try {
+    const builderKeypair = Keypair.from(config.BUILDER_PRIVATE_KEY);
+    const userKeypair = Keypair.from(config.USER_PRIVATE_KEY);
+    const builderDid = builderKeypair.toDid().toString();
+    const userDid = userKeypair.toDid().toString();
+
+    const builder = await SecretVaultBuilderClient.from({
+      keypair: builderKeypair,
+      urls: {
+        chain: config.NILCHAIN_URL,
+        auth: config.NILAUTH_URL,
+        dbs: config.NILDB_NODES,
+      },
+    });
+
+    await builder.refreshRootToken();
+
+    // Create user client
+    const user = await SecretVaultUserClient.from({
+      baseUrls: config.NILDB_NODES,
+      keypair: userKeypair,
+    });
+
+    // Builder grants write access to the user
+    const delegation = NucTokenBuilder.extending(builder.rootToken)
+      .command(new Command(['nil', 'db', 'data', 'create']))
+      .audience(userKeypair.toDid())
+      .expiresAt(Math.floor(Date.now() / 1000) + 3600) // 1 hour
+      .build(builderKeypair.privateKey());
+
+    // User's private data
+    // %allot indicates that the client should encrypt this data
+    const userPrivateData = {
+      _id: randomUUID(),
+      name: "Coder",
+      event_name: event_name,
+      travel_date: travel_date,
+      departure_airport: departure_airport,
+      destination: destination,
+      gate_number: gate_number,
+      additional_note: additional_note
+    };
+
+    // User uploads data and grants builder limited access
+    const uploadResults = await user.createData(delegation, {
+      owner: userDid,
+      acl: {
+        grantee: builderDid, // Grant access to the builder
+        read: true, // Builder can read the data
+        write: false, // Builder cannot modify the data
+        execute: true, // Builder can run queries on the data
+      },
+      collection: collectionId,
+      data: [userPrivateData],
+    });
+
+    console.log('✅ User uploaded private data with builder access granted');
+
+    res.json({ uploadResults, userPrivateData });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // View user data 
 app.get('/readdata/:collectionId/:id', async (req, res) => {
   const collectionId = req.params.collectionId;

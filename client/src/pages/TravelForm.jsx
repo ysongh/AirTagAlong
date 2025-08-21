@@ -3,6 +3,7 @@ import { Calendar, Plane, MapPin, Ticket, DoorOpen, User, ArrowRight, ArrowLeft 
 
 import Spinner from '../components/Spinner';
 import ProgressBar from '../components/travelform/ProgressBar';
+import config from '../config';
 
 const totalSteps = 3;
 
@@ -40,10 +41,8 @@ const TravelForm = () => {
     setIsLoading(true);
     setmsg("")
 
-    console.log(formData)
-
     try {
-      const response = await fetch(`${import.meta.env.VITE_SERVERURL}/storedata`, {
+      const response = await fetch(`${config.serverUrl}/upload/${config.collectionId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -55,8 +54,11 @@ const TravelForm = () => {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
+      const result = await response.json();
+      console.log(result);
+
       setIsLoading(false);
-      setmsg("Post succesful")
+      setmsg("Post succesful");
     } catch (error) {
       console.error(error.message);
       setmsg("Something went wrong")
