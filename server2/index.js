@@ -459,6 +459,46 @@ app.get('/delete/:collectionId/:id', async (req, res) => {
   }
 });
 
+// Run queries on encrypted data
+app.get('/query/:collectionId', async (req, res) => {
+  const collectionId = req.params.collectionId;
+
+  try {
+    const builderKeypair = Keypair.from(config.BUILDER_PRIVATE_KEY);
+
+    const builder = await SecretVaultBuilderClient.from({
+      keypair: builderKeypair,
+      urls: {
+        chain: config.NILCHAIN_URL,
+        auth: config.NILAUTH_URL,
+        dbs: config.NILDB_NODES,
+      },
+    });
+
+    await builder.refreshRootToken();
+
+    const query = {
+      _id: randomUUID(),
+      name: 'Find Users by Name',
+      collection: collectionId,
+      variables: {
+        searchName: {
+          description: 'Name to search for',
+          path: '$.pipeline[0].$match.name',
+        },
+      },
+      pipeline: [{ $match: { name: '' } }, { $count: 'total' }],
+    };
+
+    const references = await builder.createQuery(query);
+
+    res.json({ references });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 app.get('/', (req, res) => res.send('It Work'));
 
 // Error handling middleware
