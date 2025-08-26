@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Loader, Send, ChevronLeft, ChevronRight } from 'lucide-react';
 
 import TravelerCard from '../components/TravelerCard';
+import config from '../config';
 
 const TravelerList = () => {
   const [prompt, setPrompt] = useState('');
@@ -22,16 +23,15 @@ const TravelerList = () => {
   
   const getTravelList = async () => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_SERVERURL}/readdata`);
+      const response = await fetch(`${config.serverUrl}/travellist/${config.collectionId}`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const result = await response.json();
-      console.log(result.decryptedCollectionData);
-      setTravelers(result.decryptedCollectionData);
-      // setData(result);
+      console.log(result);
+      setTravelers(result.data);
     } catch (error) {
       console.error(error.message);
     }
@@ -141,10 +141,10 @@ const TravelerList = () => {
       <div className="space-y-4">
         {currentResults.map((traveler) => (
           <div 
-            key={traveler._id}
+            key={traveler.data._id}
             className="bg-white rounded-lg shadow p-6 transition-transform hover:scale-[1.01]"
           >
-            <TravelerCard traveler={traveler} />
+            <TravelerCard traveler={traveler.data} />
           </div>
         ))}
       </div>

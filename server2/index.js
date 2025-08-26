@@ -374,6 +374,41 @@ app.get('/viewlist', async (req, res) => {
   }
 });
 
+app.get('/travellist/:collectionId', async (req, res) => {
+  const collectionId = req.params.collectionId;
+
+  try {
+    const userKeypair = Keypair.from(config.USER_PRIVATE_KEY);
+
+    // Create user client
+    const user = await SecretVaultUserClient.from({
+      baseUrls: config.NILDB_NODES,
+      keypair: userKeypair,
+    });
+
+    const references = await user.listDataReferences();
+    console.log('✅ User has', references.data.length, 'private records stored');
+
+    const data = [];
+
+    for(let i = 0; i < references.data.length; i++){
+      if (references.data[i].collection === collectionId) {
+        const userData = await user.readData({
+          collection: references.data[i].collection,
+          document:  references.data[i].document,
+        });
+
+        data.push(userData);
+      }
+    }
+
+    res.json({ data });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Grant Access to Another Builders
 app.get('/grantaccess/:collectionId/:id', async (req, res) => {
   const collectionId = req.params.collectionId;
