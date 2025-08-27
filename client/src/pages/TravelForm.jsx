@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Calendar, Plane, MapPin, Ticket, DoorOpen, User, ArrowRight, ArrowLeft } from 'lucide-react';
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Calendar, Plane, MapPin, Ticket, DoorOpen, ArrowRight, ArrowLeft } from 'lucide-react';
 
 import Spinner from '../components/Spinner';
 import ProgressBar from '../components/travelform/ProgressBar';
@@ -8,6 +9,8 @@ import config from '../config';
 const totalSteps = 3;
 
 const TravelForm = () => {
+  const navigate = useNavigate();
+
   const [step, setStep] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [msg, setmsg] = useState("");
@@ -59,6 +62,7 @@ const TravelForm = () => {
 
       setIsLoading(false);
       setmsg("Post succesful");
+      navigate("/travellist");
     } catch (error) {
       console.error(error.message);
       setmsg("Something went wrong")
