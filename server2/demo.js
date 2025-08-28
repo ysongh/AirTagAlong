@@ -102,8 +102,19 @@ async function main() {
         properties: {
           _id: { type: 'string', format: 'uuid' },
           name: { type: 'string' },
+          email: { // email will be secret shared
+            type: "object",
+            properties: {
+              "%share": {
+                type: "string"
+              }
+            },
+            required: [
+              "%share"
+            ]
+          },
         },
-        required: ['_id', 'name'],
+        required: ['_id', 'name', 'email'],
       },
     },
   };
@@ -125,6 +136,9 @@ async function main() {
   const user = await SecretVaultUserClient.from({
     baseUrls: config.NILDB_NODES,
     keypair: userKeypair,
+    blindfold: {
+      operation: 'store',
+    },
   });
 
   // Builder grants write access to the user
@@ -139,6 +153,9 @@ async function main() {
   const userPrivateData = {
     _id: randomUUID(),
     name: "Coder",
+    email: {
+      '%allot': 'coder@example.com',
+    },
   };
 
   // User uploads data and grants builder limited access
@@ -164,6 +181,7 @@ async function main() {
 
   console.log('✅ Builder successfully accessed user data:', {
     name: userData.data.name,
+    email: userData.data.email,
     // Note: Builder can only see this because user granted read permission
   });
 
