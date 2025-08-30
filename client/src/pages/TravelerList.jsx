@@ -23,7 +23,7 @@ const TravelerList = () => {
   
   const getTravelList = async () => {
     try {
-      const response = await fetch(`${config.serverUrl}/travellist/${config.collectionId}`);
+      const response = await fetch(`${config.serverUrl}/api/test/travellist/${config.collectionId}`);
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);

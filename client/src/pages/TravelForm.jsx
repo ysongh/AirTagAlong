@@ -45,7 +45,7 @@ const TravelForm = () => {
     setmsg("")
 
     try {
-      const response = await fetch(`${config.serverUrl}/upload/${config.collectionId}`, {
+      const response = await fetch(`${config.serverUrl}/api/test/upload/${config.collectionId}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
