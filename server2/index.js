@@ -3,6 +3,7 @@ import cors from 'cors';
 import pkg from 'body-parser';
 
 import testRoutes from './routes/test.js';
+import travelerRoutes from './routes/traveler.js';
 
 const { json } = pkg;
 const app = express();
@@ -14,6 +15,7 @@ app.use(cors());
 app.use(json());
 
 app.use('/api/test', testRoutes);
+app.use('/api/traveler', travelerRoutes);
 
 app.get('/', (req, res) => res.send('It Work'));
 

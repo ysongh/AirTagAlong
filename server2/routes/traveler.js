@@ -8,8 +8,6 @@ loadEnv();
 // Import Nillion SDK components
 import {
   Keypair,
-  NilauthClient,
-  PayerBuilder,
   NucTokenBuilder,
   Command,
 } from '@nillion/nuc';
@@ -34,82 +32,6 @@ if (!config.BUILDER_PRIVATE_KEY) {
 }
 
 const router = express.Router();
-
-// Create keypairs for builder and user
-router.get('/getbuilderanduser', async (req, res) => {
-  try {
-
-    const builderKeypair = Keypair.from(config.BUILDER_PRIVATE_KEY); // Use your funded key
-    const userKeypair = Keypair.from(config.USER_PRIVATE_KEY);
-
-    const builderDid = builderKeypair.toDid().toString();
-    const userDid = userKeypair.toDid().toString();
-
-    console.log('Builder DID:', builderDid);
-    console.log('User DID:', userDid);
-
-    // Create payer and nilauth client
-    const payer = await new PayerBuilder()
-        .keypair(builderKeypair)
-        .chainUrl(config.NILCHAIN_URL)
-        .build();
-
-    const nilauth = await NilauthClient.from(config.NILAUTH_URL, payer);
-
-    // Create builder client
-    const builder = await SecretVaultBuilderClient.from({
-        keypair: builderKeypair,
-        urls: {
-          chain: config.NILCHAIN_URL,
-          auth: config.NILAUTH_URL,
-          dbs: config.NILDB_NODES,
-        },
-    });
-
-    // Refresh token using existing subscription
-    await builder.refreshRootToken();
-    res.json({ builderDid, userDid, userKeypair });
-
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({ error: error.message });
-    }
-});
-
-// Register builder
-router.get('/registerbuilder', async (req, res) => {
-  try {
-    const builderKeypair = Keypair.from(config.BUILDER_PRIVATE_KEY);
-
-    const builder = await SecretVaultBuilderClient.from({
-      keypair: builderKeypair,
-      urls: {
-        chain: config.NILCHAIN_URL,
-        auth: config.NILAUTH_URL,
-        dbs: config.NILDB_NODES,
-      },
-    });
-
-    await builder.refreshRootToken();
-
-    const existingProfile = await builder.readProfile();
-    res.json({ msg: "Builder already registered:" + existingProfile.data.name });
-  } catch (profileError) {
-    try {
-      await builder.register({
-        did: builderDid,
-        name: 'My Demo Builder',
-      });
-      res.json({ msg: "Builder registered successfully" });
-    } catch (registerError) {
-      if (registerError.message.includes('duplicate key')) {
-         res.status(500).json({ error: "Builder already registered (duplicate key)" });
-      } else {
-        res.status(500).json({ error: registerError.message });
-      }
-    }
-  }
-});
 
 // Create collection
 router.get('/createcollection', async (req, res) => {
@@ -167,9 +89,15 @@ router.get('/createcollection', async (req, res) => {
   }
 });
 
-// Uploads Data
-router.get('/upload/:collectionId', async (req, res) => {
+router.post('/upload/:collectionId', async (req, res) => {
   const collectionId = req.params.collectionId;
+  
+  const event_name = req.body.event_name;
+  const travel_date = req.body.travel_date;
+  const departure_airport = req.body.departure_airport;
+  const destination = req.body.destination;
+  const gate_number = req.body.gate_number;
+  const additional_note = req.body.additional_note;
 
   try {
     const builderKeypair = Keypair.from(config.BUILDER_PRIVATE_KEY);
@@ -206,12 +134,12 @@ router.get('/upload/:collectionId', async (req, res) => {
     const userPrivateData = {
       _id: randomUUID(),
       name: "Coder",
-      event_name: 'Hackathon',
-      travel_date: '02/04/2025',
-      departure_airport: 'John F. Kennedy International',
-      destination: 'London Heathrow',
-      gate_number: '1',
-      additional_note: 'I like to read book'
+      event_name: event_name,
+      travel_date: travel_date,
+      departure_airport: departure_airport,
+      destination: destination,
+      gate_number: gate_number,
+      additional_note: additional_note
     };
 
     // User uploads data and grants builder limited access
@@ -289,57 +217,35 @@ router.get('/viewlist', async (req, res) => {
   }
 });
 
-// Grant Access to Another Builders
-router.get('/grantaccess/:collectionId/:id', async (req, res) => {
+router.get('/travellist/:collectionId', async (req, res) => {
   const collectionId = req.params.collectionId;
-  const id = req.params.id;
 
   try {
     const userKeypair = Keypair.from(config.USER_PRIVATE_KEY);
 
+    // Create user client
     const user = await SecretVaultUserClient.from({
       baseUrls: config.NILDB_NODES,
       keypair: userKeypair,
     });
 
-    await user.grantAccess({
-      collection: collectionId,
-      document: id,
-      acl: {
-        grantee: "new-builder-did",
-        read: true, // New Builder can read
-        write: false, // New Builder cannot modify
-        execute: false, // New Builder cannot run queries
-      },
-    });
+    const references = await user.listDataReferences();
+    console.log('✅ User has', references.data.length, 'private records stored');
 
-    res.json({ msg: "Success" });
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).json({ error: error.message });
-  }
-});
+    const data = [];
 
-// Revoking Access to Another Builders
-router.get('/revokeaccess/:collectionId/:id', async (req, res) => {
-  const collectionId = req.params.collectionId;
-  const id = req.params.id;
+    for(let i = 0; i < references.data.length; i++){
+      if (references.data[i].collection === collectionId) {
+        const userData = await user.readData({
+          collection: references.data[i].collection,
+          document:  references.data[i].document,
+        });
 
-  try {
-    const userKeypair = Keypair.from(config.USER_PRIVATE_KEY);
+        data.push(userData);
+      }
+    }
 
-    const user = await SecretVaultUserClient.from({
-      baseUrls: config.NILDB_NODES,
-      keypair: userKeypair,
-    });
-
-    await user.revokeAccess({
-      grantee: "new-builder-did",
-      collection: collectionId,
-      document: id,
-    });
-
-    res.json({ msg: "Success" });
+    res.json({ data });
   } catch (error) {
     console.error('Error:', error);
     res.status(500).json({ error: error.message });
