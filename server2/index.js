@@ -4,6 +4,7 @@ import pkg from 'body-parser';
 
 import testRoutes from './routes/test.js';
 import travelerRoutes from './routes/traveler.js';
+import blindfoldRoutes from './routes/blindfold.js';
 
 const { json } = pkg;
 const app = express();
@@ -16,6 +17,7 @@ app.use(json());
 
 app.use('/api/test', testRoutes);
 app.use('/api/traveler', travelerRoutes);
+app.use('/api/blindfold', blindfoldRoutes);
 
 app.get('/', (req, res) => res.send('It Work'));
 
