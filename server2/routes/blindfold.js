@@ -15,15 +15,28 @@ router.get('/generatingkeys', async (req, res) => {
   }
 });
 
-router.get('/ciphertext', async (req, res) => {
+router.get('/encrypttext', async (req, res) => {
   try {
     const cluster = {"nodes": [{}]};
     const secretKey = await SecretKey.generate(cluster, {"store": true});
 
     const plaintext = "abc";
     const ciphertext = await encrypt(secretKey, plaintext);
-    res.json({ ciphertext });
+    res.json({ secretKey, ciphertext });
    } catch (error) {
+      console.error('Error:', error);
+      res.status(500).json({ error: error.message });
+  }
+});
+
+router.post('/decrypttext', async (req, res) => {
+  const secretKey = req.body.secretKey;
+  const ciphertext = req.body.ciphertext;
+
+  try {
+    const decrypted = await blindfold.decrypt(secretKey, ciphertext);
+    res.json({ decrypted });
+  } catch (error) {
       console.error('Error:', error);
       res.status(500).json({ error: error.message });
   }
