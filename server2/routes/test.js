@@ -236,6 +236,40 @@ router.get('/upload/:collectionId', async (req, res) => {
   }
 });
 
+router.post('/approve/', async (req, res) => {
+  const userDid = req.body.userDid;
+
+  try {
+    const builderKeypair = Keypair.from(config.BUILDER_PRIVATE_KEY);
+
+    const builder = await SecretVaultBuilderClient.from({
+      keypair: builderKeypair,
+      urls: {
+        chain: config.NILCHAIN_URL,
+        auth: config.NILAUTH_URL,
+        dbs: config.NILDB_NODES,
+      },
+    });
+
+    await builder.refreshRootToken();
+
+    // Builder grants write access to the user
+    const delegation = NucTokenBuilder.extending(builder.rootToken)
+      .command(new Command(['nil', 'db', 'data', 'create']))
+      .audience(userDid)
+      .expiresAt(Math.floor(Date.now() / 1000) + 3600) // 1 hour
+      .build(builderKeypair.privateKey());
+
+
+    console.log('✅ Builder approve user:', userDid);
+
+    res.json({ msg: "Success", delegation });
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // View user data 
 router.get('/readdata/:collectionId/:id', async (req, res) => {
   const collectionId = req.params.collectionId;
