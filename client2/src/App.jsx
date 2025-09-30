@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { Keypair } from '@nillion/nuc';
 import { SecretVaultBuilderClient } from '@nillion/secretvaults';
 
+import ExtensionAccessRequest from './pages/ExtensionAccessRequest';
+
 const NILLION_API_KEY = process.env.REACT_APP_NILLION_API_KEY || '';
 const NILLION_COLLECTION_ID = process.env.REACT_APP_NILLION_COLLECTION_ID || '';
 
@@ -70,6 +72,7 @@ function App() {
   ) {
     return (
       <div style={{ padding: '3rem', textAlign: 'center' }}>
+        <ExtensionAccessRequest />
         <h1>⚠️ Environment Variables Missing</h1>
         <p>Create a .env file in your project root:</p>
         <pre style={{ background: '#f5f5f5', padding: '1rem' }}>
