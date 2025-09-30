@@ -15,70 +15,72 @@ export default function ExtensionAccessRequest() {
   const [tabInfo, setTabInfo] = useState(null);
 
 
-  useEffect(() => {
-    const checkExtension = () => {
-      if (typeof chrome !== 'undefined' && chrome.runtime) {
-        chrome.runtime.sendMessage(
-          EXTENSION_ID,
-          { type: 'PING' },
-          (response) => {
-            if (chrome.runtime.lastError) {
-              setStatus({
-                message: 'Extension not found - Please install and reload page',
-                type: 'denied'
-              });
-            } else {
-              setStatus({
-                message: 'Extension detected! Click to request access',
-                type: 'pending'
-              });
-              setRequestBtnDisabled(false);
-            }
-          }
-        );
-      } else {
-        setStatus({
-          message: 'Not running in a browser that supports extensions',
-          type: 'denied'
-        });
-      }
-    };
-
-    const timer = setTimeout(checkExtension, 500);
-
-    // Listen for messages from extension
-    if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.onMessage) {
-      const messageListener = (message, sender, sendResponse) => {
-        if (message.type === 'ACCESS_RESPONSE') {
-          if (message.granted) {
-            setExtensionConnected(true);
+useEffect(() => {
+  const checkExtension = () => {
+    if (typeof chrome !== 'undefined' && chrome.runtime) {
+      chrome.runtime.sendMessage(
+        EXTENSION_ID,
+        { type: 'PING' },
+        (response) => {
+          if (chrome.runtime.lastError) {
             setStatus({
-              message: 'Access Granted! You can now use extension features',
-              type: 'granted'
-            });
-            setTestBtnDisabled(false);
-            setShowRequestBtn(false);
-          } else {
-            setStatus({
-              message: 'Access Denied by user',
+              message: 'Extension not found - Please install and reload page',
               type: 'denied'
             });
+          } else {
+            setStatus({
+              message: 'Extension detected! Click to request access',
+              type: 'pending'
+            });
             setRequestBtnDisabled(false);
-            setRequestBtnText('Request Again');
           }
         }
-      };
-
-      chrome.runtime.onMessage.addListener(messageListener);
-
-      return () => {
-        clearTimeout(timer);
-        chrome.runtime.onMessage.removeListener(messageListener);
-      };
+      );
+    } else {
+      setStatus({
+        message: 'Not running in a browser that supports extensions',
+        type: 'denied'
+      });
     }
+  };
 
-    return () => clearTimeout(timer);
-  }, []);
+  const timer = setTimeout(checkExtension, 500);
+
+  // Listen for messages from extension via postMessage (from content script)
+  const messageListener = (event) => {
+    // Only accept messages from the extension's content script
+    if (event.data.type === 'FROM_EXTENSION') {
+      const message = event.data.data;
+      console.log('Received from extension:', message);
+      
+      if (message.type === 'ACCESS_RESPONSE') {
+        if (message.granted) {
+          setExtensionConnected(true);
+          setStatus({
+            message: 'Access Granted! You can now use extension features',
+            type: 'granted'
+          });
+          setTestBtnDisabled(false);
+          setShowRequestBtn(false);
+        } else {
+          setStatus({
+            message: 'Access Denied by user',
+            type: 'denied'
+          });
+          setRequestBtnDisabled(false);
+          setRequestBtnText('Request Again');
+        }
+      }
+    }
+  };
+
+  window.addEventListener('message', messageListener);
+
+  return () => {
+    clearTimeout(timer);
+    window.removeEventListener('message', messageListener);
+  };
+}, []);
 
   const requestAccess = () => {
     setRequestBtnDisabled(true);
