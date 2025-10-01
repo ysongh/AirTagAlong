@@ -236,7 +236,7 @@ router.get('/upload/:collectionId', async (req, res) => {
   }
 });
 
-router.post('/approve/', async (req, res) => {
+router.post('/approve', async (req, res) => {
   const userDid = req.body.userDid;
 
   try {
