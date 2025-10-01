@@ -13,7 +13,7 @@ export default function ExtensionAccessRequest() {
   const [testBtnDisabled, setTestBtnDisabled] = useState(true);
   const [showRequestBtn, setShowRequestBtn] = useState(true);
   const [tabInfo, setTabInfo] = useState(null);
-
+  const [nillionDiDObj, setNillionDiDObj] = useState(null);
 
 useEffect(() => {
   const checkExtension = () => {
@@ -62,6 +62,7 @@ useEffect(() => {
           });
           setTestBtnDisabled(false);
           setShowRequestBtn(false);
+          setNillionDiDObj(message.nillionDiDObj);
         } else {
           setStatus({
             message: 'Access Denied by user',
@@ -158,6 +159,27 @@ useEffect(() => {
     }
   };
 
+  const approveUser = async() => {
+    try {
+      const response = await fetch("http://localhost:4000/api/test/approve", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ nillionDiDObj })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json();
+      console.log(result);
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center p-5">
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-2xl w-full text-center">
@@ -188,6 +210,13 @@ useEffect(() => {
             className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-base"
           >
             Test Connection
+          </button>
+           <button
+            onClick={approveUser}
+            disabled={testBtnDisabled}
+            className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-base"
+          >
+            Approve User
           </button>
         </div>
 
