@@ -13,6 +13,8 @@ export default function ExtensionAccessRequest({ nillionDiD, setNillionDiD }) {
   const [testBtnDisabled, setTestBtnDisabled] = useState(true);
   const [showRequestBtn, setShowRequestBtn] = useState(true);
   const [tabInfo, setTabInfo] = useState(null);
+  const [dataToSend, setDataToSend] = useState('');
+  const [sendDataResponse, setSendDataResponse] = useState(null);
 
 useEffect(() => {
   const checkExtension = () => {
@@ -147,6 +149,44 @@ useEffect(() => {
     );
   };
 
+  // Send data to extension
+  const sendDataToExtension = () => {
+    if (!extensionConnected) {
+      alert('Please request access first!');
+      return;
+    }
+
+    if (!dataToSend.trim()) {
+      alert('Please enter some data to send!');
+      return;
+    }
+
+    chrome.runtime.sendMessage(
+      EXTENSION_ID,
+      {
+        type: 'CREATE_DATA',
+        data: {
+          message: dataToSend,
+          timestamp: Date.now(),
+          origin: window.location.origin
+        }
+      },
+      (response) => {
+        if (chrome.runtime.lastError) {
+          console.error('Error sending data:', chrome.runtime.lastError);
+          setSendDataResponse({
+            success: false,
+            message: 'Failed to send data'
+          });
+        } else {
+          console.log('Data sent successfully:', response);
+          setSendDataResponse(response);
+          setDataToSend(''); // Clear input after successful send
+        }
+      }
+    );
+  };
+
   const getStatusClasses = () => {
     const baseClasses = 'px-4 py-3 rounded border font-bold my-5';
     if (status.type === 'pending') {
@@ -218,6 +258,42 @@ useEffect(() => {
             Approve User
           </button>
         </div>
+
+        {extensionConnected && (
+          <div className="mt-5 p-4 bg-blue-50 rounded border border-blue-200">
+            <h3 className="text-xl font-bold mb-3">Send Data to Extension</h3>
+            <div className="flex gap-2 mb-3">
+              <input
+                type="text"
+                value={dataToSend}
+                onChange={(e) => setDataToSend(e.target.value)}
+                placeholder="Enter data to send..."
+                className="flex-1 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter') {
+                    sendDataToExtension();
+                  }
+                }}
+              />
+              <button
+                onClick={sendDataToExtension}
+                className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
+              >
+                Send Data
+              </button>
+            </div>
+            {sendDataResponse && (
+              <div className={`p-3 rounded ${sendDataResponse.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+                <p><strong>Status:</strong> {sendDataResponse.message}</p>
+                {sendDataResponse.receivedData && (
+                  <p className="text-sm mt-1">
+                    <strong>Extension received:</strong> {sendDataResponse.receivedData.message}
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         {tabInfo && (
           <div className="mt-5 p-4 bg-gray-50 rounded">
