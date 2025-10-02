@@ -7,6 +7,7 @@ loadEnv();
 
 // Import Nillion SDK components
 import {
+  Did,
   Keypair,
   NilauthClient,
   PayerBuilder,
@@ -237,7 +238,7 @@ router.get('/upload/:collectionId', async (req, res) => {
 });
 
 router.post('/approve', async (req, res) => {
-  const userDid = req.body.userDid;
+  const userDid = req.body.nillionDiD;
 
   try {
     const builderKeypair = Keypair.from(config.BUILDER_PRIVATE_KEY);
@@ -253,13 +254,20 @@ router.post('/approve', async (req, res) => {
 
     await builder.refreshRootToken();
 
+     const exampleDid = Did.fromHex(
+      userDid.replace(
+        "did:nil:",
+        ""
+      )
+    );
+    console.log(exampleDid, typeof exampleDid)
+
     // Builder grants write access to the user
     const delegation = NucTokenBuilder.extending(builder.rootToken)
       .command(new Command(['nil', 'db', 'data', 'create']))
-      .audience(userDid)
+      .audience(exampleDid)
       .expiresAt(Math.floor(Date.now() / 1000) + 3600) // 1 hour
       .build(builderKeypair.privateKey());
-
 
     console.log('✅ Builder approve user:', userDid);
 

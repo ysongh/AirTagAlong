@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 
 import { EXTENSION_ID } from '../../keys';
 
-export default function ExtensionAccessRequest({ setNillionKeypair }) {
+export default function ExtensionAccessRequest({ nillionDiD, setNillionDiD }) {
   const [status, setStatus] = useState({
     message: 'Extension not detected - Please install the extension first',
     type: 'pending'
@@ -13,7 +13,6 @@ export default function ExtensionAccessRequest({ setNillionKeypair }) {
   const [testBtnDisabled, setTestBtnDisabled] = useState(true);
   const [showRequestBtn, setShowRequestBtn] = useState(true);
   const [tabInfo, setTabInfo] = useState(null);
-  const [nillionDiD, setNillionDiD] = useState("");
 
 useEffect(() => {
   const checkExtension = () => {
@@ -63,7 +62,6 @@ useEffect(() => {
           setTestBtnDisabled(false);
           setShowRequestBtn(false);
           setNillionDiD(message.nillionDiD);
-          setNillionKeypair(message.nillionKeypair);
         } else {
           setStatus({
             message: 'Access Denied by user',

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Keypair, NucTokenBuilder, Command } from '@nillion/nuc';
+import { Did, Keypair, NucTokenBuilder, Command } from '@nillion/nuc';
 import { SecretVaultBuilderClient } from '@nillion/secretvaults';
 
 import ExtensionAccessRequest from './pages/ExtensionAccessRequest';
@@ -11,7 +11,7 @@ function App() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [nillionKeypair, setNillionKeypair] = useState(null);
+  const [nillionDiD, setNillionDiD] = useState("");
 
   const readCollection = async () => {
     setLoading(true);
@@ -59,6 +59,7 @@ function App() {
     setError(null);
 
     try {
+      const builderKeypair = Keypair.from(NILLION_API_KEY);
       // get a Nillion API Key: https://docs.nillion.com/build/network-api-access
       // see Nillion Testnet Config: https://docs.nillion.com/build/network-config#nildb-nodes
       const builder = await SecretVaultBuilderClient.from({
@@ -78,17 +79,23 @@ function App() {
 
       await builder.refreshRootToken();
 
-      console.log(nillionKeypair)
+      const exampleDid = Did.fromHex(
+        nillionDiD.replace(
+          "did:nil:",
+          ""
+        )
+      );
+      console.log(typeof NILLION_API_KEY, NILLION_API_KEY, NILLION_API_KEY.length)
 
       // Builder grants write access to the user
       const delegation = NucTokenBuilder.extending(builder.rootToken)
         .command(new Command(['nil', 'db', 'data', 'create']))
-        .audience(nillionKeypair.toDid())
+        .audience(exampleDid)
         .expiresAt(Math.floor(Date.now() / 1000) + 3600) // 1 hour
-        .build(NILLION_API_KEY);
+        .build(builderKeypair.privateKey());
 
 
-      console.log('✅ Builder approve user:', userDid);
+      console.log('✅ Builder approve user:', nillionDiD);
       console.log('✅ Delegation user:', delegation);
 
     } catch (err) {
@@ -130,7 +137,7 @@ REACT_APP_NILLION_COLLECTION_ID=your-collection-id-here`}
 
   return (
     <div style={{ padding: '2rem' }}>
-      <ExtensionAccessRequest setNillionKeypair={setNillionKeypair} />
+      <ExtensionAccessRequest nillionDiD={nillionDiD} setNillionDiD={setNillionDiD} />
       <h1>Nillion Collection Reader</h1>
       <p>Reading all records in your Nillion Private Storage collection</p>
 
