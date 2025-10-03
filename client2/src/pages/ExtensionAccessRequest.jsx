@@ -2,7 +2,13 @@ import { useState, useEffect } from 'react';
 
 import { EXTENSION_ID } from '../../keys';
 
-export default function ExtensionAccessRequest({ nillionDiD, setNillionDiD }) {
+export default function ExtensionAccessRequest({
+  nillionDiD,
+  setNillionDiD,
+  builderDid,
+  delegationToken,
+  collectionId
+}) {
   const [status, setStatus] = useState({
     message: 'Extension not detected - Please install the extension first',
     type: 'pending'
@@ -168,8 +174,12 @@ useEffect(() => {
         data: {
           message: dataToSend,
           timestamp: Date.now(),
-          origin: window.location.origin
-        }
+          origin: window.location.origin,
+          builderDid: builderDid,
+          delegationToken: delegationToken,
+          collectionId: collectionId
+        },
+        openPopup: true
       },
       (response) => {
         if (chrome.runtime.lastError) {

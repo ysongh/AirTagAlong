@@ -1,17 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Did, Keypair, NucTokenBuilder, Command } from '@nillion/nuc';
 import { SecretVaultBuilderClient } from '@nillion/secretvaults';
 
 import ExtensionAccessRequest from './pages/ExtensionAccessRequest';
+import { REACT_APP_NILLION_API_KEY, REACT_APP_NILLION_COLLECTION_ID } from '../keys';
 
-const NILLION_API_KEY = process.env.REACT_APP_NILLION_API_KEY || '';
-const NILLION_COLLECTION_ID = process.env.REACT_APP_NILLION_COLLECTION_ID || '';
+const NILLION_API_KEY = REACT_APP_NILLION_API_KEY || '';
+const NILLION_COLLECTION_ID = REACT_APP_NILLION_COLLECTION_ID || '';
 
 function App() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [nillionDiD, setNillionDiD] = useState("");
+  const [delegationToken, setDelegationToken] = useState();
 
   const readCollection = async () => {
     setLoading(true);
@@ -98,6 +100,8 @@ function App() {
       console.log('✅ Builder approve user:', nillionDiD);
       console.log('✅ Delegation user:', delegation);
 
+      setDelegationToken(delegation);
+
     } catch (err) {
       setError((err).message || 'Failed to load data');
       console.error(err);
@@ -137,7 +141,13 @@ REACT_APP_NILLION_COLLECTION_ID=your-collection-id-here`}
 
   return (
     <div style={{ padding: '2rem' }}>
-      <ExtensionAccessRequest nillionDiD={nillionDiD} setNillionDiD={setNillionDiD} />
+      <ExtensionAccessRequest
+        nillionDiD={nillionDiD}
+        setNillionDiD={setNillionDiD}
+        builderDid={Keypair.from(NILLION_API_KEY).toDidString()}
+        delegationToken={delegationToken}
+        collectionId={NILLION_COLLECTION_ID}
+      />
       <h1>Nillion Collection Reader</h1>
       <p>Reading all records in your Nillion Private Storage collection</p>
 
