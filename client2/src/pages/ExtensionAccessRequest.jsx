@@ -167,6 +167,17 @@ useEffect(() => {
       return;
     }
 
+    const userPrivateData = {
+      _id: crypto.randomUUID(),
+      name: "Coder",
+      event_name: 'Hackathon',
+      travel_date: '02/04/2025',
+      departure_airport: 'John F. Kennedy International',
+      destination: 'London Heathrow',
+      gate_number: '1',
+      additional_note: 'I like to read book'
+    };
+
     chrome.runtime.sendMessage(
       EXTENSION_ID,
       {
@@ -177,7 +188,8 @@ useEffect(() => {
           origin: window.location.origin,
           builderDid: builderDid,
           delegationToken: delegationToken,
-          collectionId: collectionId
+          collectionId: collectionId,
+          userPrivateData: userPrivateData
         },
         openPopup: true
       },
