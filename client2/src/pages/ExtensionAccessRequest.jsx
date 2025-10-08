@@ -242,7 +242,7 @@ useEffect(() => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-5">
+    <div className="bg-gray-100 flex items-center justify-center p-5">
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-2xl w-full text-center">
         <h1 className="text-3xl font-bold text-gray-800 mb-5">
           Extension Access Request
@@ -291,11 +291,6 @@ useEffect(() => {
                 onChange={(e) => setDataToSend(e.target.value)}
                 placeholder="Enter data to send..."
                 className="flex-1 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                onKeyPress={(e) => {
-                  if (e.key === 'Enter') {
-                    sendDataToExtension();
-                  }
-                }}
               />
               <button
                 onClick={sendDataToExtension}
