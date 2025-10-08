@@ -134,6 +134,17 @@ router.get('/createcollection', async (req, res) => {
           destination: { type: 'string' },
           gate_number: { type: 'string' },
           additional_note: { type: 'string' },
+          email: {
+            type: "object",
+            properties: {
+              "%share": {
+                type: "string"
+              }
+            },
+            required: [
+              "%share"
+            ]
+          },
         },
         required: ['_id', 'event_name'],
       },
@@ -193,6 +204,9 @@ router.get('/upload/:collectionId', async (req, res) => {
     const user = await SecretVaultUserClient.from({
       baseUrls: config.NILDB_NODES,
       keypair: userKeypair,
+      blindfold: {
+        operation: 'store',
+      },
     });
 
     // Builder grants write access to the user
@@ -212,7 +226,10 @@ router.get('/upload/:collectionId', async (req, res) => {
       departure_airport: 'John F. Kennedy International',
       destination: 'London Heathrow',
       gate_number: '1',
-      additional_note: 'I like to read book'
+      additional_note: 'I like to read book',
+      email: {
+        '%allot': 'coder@example.com',
+      },
     };
 
     // User uploads data and grants builder limited access
