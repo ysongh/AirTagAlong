@@ -1,14 +1,10 @@
 import { useState, useEffect } from 'react';
 
 import { EXTENSION_ID } from '../../keys';
-import { sendDataToExtension } from '../services/useExtension';
 
 export default function ExtensionAccessRequest({
   nillionDiD,
   setNillionDiD,
-  builderDid,
-  delegationToken,
-  collectionId
 }) {
   const [status, setStatus] = useState({
     message: 'Extension not detected - Please install the extension first',
@@ -20,7 +16,6 @@ export default function ExtensionAccessRequest({
   const [testBtnDisabled, setTestBtnDisabled] = useState(true);
   const [showRequestBtn, setShowRequestBtn] = useState(true);
   const [tabInfo, setTabInfo] = useState(null);
-  const [dataToSend, setDataToSend] = useState('');
   const [sendDataResponse, setSendDataResponse] = useState(null);
 
 useEffect(() => {
@@ -156,32 +151,6 @@ useEffect(() => {
     );
   };
 
-  // Send data to extension
-  const handleSendDataToExtension = () => {
-    if (!extensionConnected) {
-      alert('Please request access first!');
-      return;
-    }
-
-    if (!dataToSend.trim()) {
-      alert('Please enter some data to send!');
-      return;
-    }
-
-    const userPrivateData = {
-      _id: crypto.randomUUID(),
-      name: "Coder",
-      event_name: 'Hackathon',
-      travel_date: '02/04/2025',
-      departure_airport: 'John F. Kennedy International',
-      destination: 'London Heathrow',
-      gate_number: '44',
-      additional_note: 'I like to eat'
-    };
-    
-    sendDataToExtension(userPrivateData, builderDid, delegationToken, collectionId);
-  };
-
   const getStatusClasses = () => {
     const baseClasses = 'px-4 py-3 rounded border font-bold my-5';
     if (status.type === 'pending') {
@@ -256,22 +225,7 @@ useEffect(() => {
 
         {extensionConnected && (
           <div className="mt-5 p-4 bg-blue-50 rounded border border-blue-200">
-            <h3 className="text-xl font-bold mb-3">Send Data to Extension</h3>
-            <div className="flex gap-2 mb-3">
-              <input
-                type="text"
-                value={dataToSend}
-                onChange={(e) => setDataToSend(e.target.value)}
-                placeholder="Enter data to send..."
-                className="flex-1 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <button
-                onClick={handleSendDataToExtension}
-                className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
-              >
-                Send Data
-              </button>
-            </div>
+            <p>Connnected</p>
             {sendDataResponse && (
               <div className={`p-3 rounded ${sendDataResponse.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                 <p><strong>Status:</strong> {sendDataResponse.message}</p>

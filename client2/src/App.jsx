@@ -4,6 +4,7 @@ import { SecretVaultBuilderClient } from '@nillion/secretvaults';
 
 import ExtensionAccessRequest from './pages/ExtensionAccessRequest';
 import { REACT_APP_NILLION_API_KEY, REACT_APP_NILLION_COLLECTION_ID } from '../keys';
+import { sendDataToExtension } from './services/useExtension';
 
 const NILLION_API_KEY = REACT_APP_NILLION_API_KEY || '';
 const NILLION_COLLECTION_ID = REACT_APP_NILLION_COLLECTION_ID || '';
@@ -110,6 +111,25 @@ function App() {
     }
   };
 
+    // Send data to extension
+  const handleSendDataToExtension = () => {
+    const builderDid = Keypair.from(NILLION_API_KEY).toDidString();
+    const collectionId = NILLION_COLLECTION_ID;
+
+    const userPrivateData = {
+      _id: crypto.randomUUID(),
+      name: "Coder",
+      event_name: 'Hackathon',
+      travel_date: '02/04/2025',
+      departure_airport: 'LGA',
+      destination: 'AAA',
+      gate_number: '44',
+      additional_note: 'I like to code'
+    };
+    
+    sendDataToExtension(userPrivateData, builderDid, delegationToken, collectionId);
+  };
+
   useEffect(() => {
     if (
       NILLION_API_KEY &&
@@ -144,20 +164,29 @@ REACT_APP_NILLION_COLLECTION_ID=your-collection-id-here`}
       <ExtensionAccessRequest
         nillionDiD={nillionDiD}
         setNillionDiD={setNillionDiD}
-        builderDid={Keypair.from(NILLION_API_KEY).toDidString()}
-        delegationToken={delegationToken}
-        collectionId={NILLION_COLLECTION_ID}
       />
       <h1>Nillion Collection Reader</h1>
       <p>Reading all records in your Nillion Private Storage collection</p>
 
-      <button onClick={readCollection} disabled={loading}>
+      <button className="bg-green-600 text-white px-6 py-3 rounded hover:bg-green-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-base mr-3" onClick={readCollection} disabled={loading}>
         {loading ? 'Loading...' : 'Refresh Data'}
       </button>
 
-       <button onClick={approveUser} disabled={loading}>
+       <button className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-base" onClick={approveUser} disabled={loading}>
         {loading ? 'Loading...' : 'Approve User'}
       </button>
+
+      {delegationToken && <div className="mt-5 p-4 bg-blue-50 rounded border border-blue-200">
+        <h3 className="text-xl font-bold mb-3">Send Data to Extension</h3>
+          <div className="flex gap-2 mb-3">
+          <button
+            onClick={handleSendDataToExtension}
+            className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
+          >
+            Send Data
+          </button>
+        </div>
+      </div>}
 
       {error && (
         <div style={{ color: 'red', marginTop: '10px' }}>Error: {error}</div>
