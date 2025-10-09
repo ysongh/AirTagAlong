@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 
 import { EXTENSION_ID } from '../../keys';
+import { sendDataToExtension } from '../services/useExtension';
 
 export default function ExtensionAccessRequest({
   nillionDiD,
@@ -156,7 +157,7 @@ useEffect(() => {
   };
 
   // Send data to extension
-  const sendDataToExtension = () => {
+  const handleSendDataToExtension = () => {
     if (!extensionConnected) {
       alert('Please request access first!');
       return;
@@ -174,39 +175,11 @@ useEffect(() => {
       travel_date: '02/04/2025',
       departure_airport: 'John F. Kennedy International',
       destination: 'London Heathrow',
-      gate_number: '1',
-      additional_note: 'I like to read book'
+      gate_number: '44',
+      additional_note: 'I like to eat'
     };
-
-    chrome.runtime.sendMessage(
-      EXTENSION_ID,
-      {
-        type: 'CREATE_DATA',
-        data: {
-          message: dataToSend,
-          timestamp: Date.now(),
-          origin: window.location.origin,
-          builderDid: builderDid,
-          delegationToken: delegationToken,
-          collectionId: collectionId,
-          userPrivateData: userPrivateData
-        },
-        openPopup: true
-      },
-      (response) => {
-        if (chrome.runtime.lastError) {
-          console.error('Error sending data:', chrome.runtime.lastError);
-          setSendDataResponse({
-            success: false,
-            message: 'Failed to send data'
-          });
-        } else {
-          console.log('Data sent successfully:', response);
-          setSendDataResponse(response);
-          setDataToSend(''); // Clear input after successful send
-        }
-      }
-    );
+    
+    sendDataToExtension(userPrivateData, builderDid, delegationToken, collectionId);
   };
 
   const getStatusClasses = () => {
@@ -293,7 +266,7 @@ useEffect(() => {
                 className="flex-1 px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               <button
-                onClick={sendDataToExtension}
+                onClick={handleSendDataToExtension}
                 className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
               >
                 Send Data
