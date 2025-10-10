@@ -15,6 +15,7 @@ function App() {
   const [error, setError] = useState(null);
   const [nillionDiD, setNillionDiD] = useState("");
   const [delegationToken, setDelegationToken] = useState();
+  const [collectionName, setCollectionName] = useState("");
 
   const readCollection = async () => {
     setLoading(true);
@@ -79,8 +80,11 @@ function App() {
         blindfold: { operation: 'store' },
       });
 
-
       await builder.refreshRootToken();
+
+      const collections = await builder.readCollections();
+      const collection = collections.data.find(item => item.id === NILLION_COLLECTION_ID);
+      setCollectionName(collection.name);
 
       const exampleDid = Did.fromHex(
         nillionDiD.replace(
@@ -129,7 +133,7 @@ function App() {
       additional_note: e.target.additional_note.value,
     };
     
-    sendDataToExtension(userPrivateData, builderDid, delegationToken, collectionId);
+    sendDataToExtension(collectionName, userPrivateData, builderDid, delegationToken, collectionId);
   };
 
   useEffect(() => {

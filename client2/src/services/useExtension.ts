@@ -1,6 +1,7 @@
 import { EXTENSION_ID } from '../../keys';
 
 export const sendDataToExtension = (
+  collectionName: string,
   userPrivateData: string,
   builderDid: string,
   delegationToken: string,
@@ -11,7 +12,7 @@ export const sendDataToExtension = (
     {
       type: 'CREATE_DATA',
       data: {
-        message: "Test",
+        collectionName: collectionName,
         timestamp: Date.now(),
         origin: window.location.origin,
         builderDid: builderDid,
