@@ -112,19 +112,21 @@ function App() {
   };
 
     // Send data to extension
-  const handleSendDataToExtension = () => {
+  const handleSendDataToExtension = (e) => {
+    e.preventDefault();
+
     const builderDid = Keypair.from(NILLION_API_KEY).toDidString();
     const collectionId = NILLION_COLLECTION_ID;
 
     const userPrivateData = {
       _id: crypto.randomUUID(),
       name: "Coder",
-      event_name: 'Hackathon',
-      travel_date: '02/04/2025',
-      departure_airport: 'LGA',
-      destination: 'AAA',
-      gate_number: '44',
-      additional_note: 'I like to code'
+      event_name: e.target.event_name.value,
+      travel_date: e.target.travel_date.value,
+      departure_airport: e.target.departure_airport.value,
+      destination: e.target.destination.value,
+      gate_number:  e.target.gate_number.value,
+      additional_note: e.target.additional_note.value,
     };
     
     sendDataToExtension(userPrivateData, builderDid, delegationToken, collectionId);
@@ -178,14 +180,88 @@ REACT_APP_NILLION_COLLECTION_ID=your-collection-id-here`}
 
       {delegationToken && <div className="mt-5 p-4 bg-blue-50 rounded border border-blue-200">
         <h3 className="text-xl font-bold mb-3">Send Data to Extension</h3>
-          <div className="flex gap-2 mb-3">
+          <form onSubmit={handleSendDataToExtension} className="space-y-6">
+            <div className="space-y-2">
+              <label className="flex items-center text-sm font-medium text-gray-700">
+                Event Name
+              </label>
+              <input
+                id="event_name"
+                type="text"
+                placeholder="Concert, Sports Game, Conference, etc."
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="flex items-center text-sm font-medium text-gray-700">
+                Travel Date
+              </label>
+              <input
+                id="travel_date"
+                type="date"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="flex items-center text-sm font-medium text-gray-700">
+                Departure Airport
+              </label>
+              <input
+                id="departure_airport"
+                type="text"
+                placeholder="Enter airport code or name"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="flex items-center text-sm font-medium text-gray-700">
+                Destination
+              </label>
+              <input
+                id="destination"
+                type="text"
+                placeholder="Enter destination airport code or name"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="flex items-center text-sm font-medium text-gray-700">
+                Gate Number
+              </label>
+              <input
+                id="gate_number"
+                type="text"
+                placeholder="Enter gate number"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm font-medium text-gray-700">
+                Additional Notes
+              </label>
+              <textarea
+                id="additional_note"
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                rows="3"
+                placeholder="Share any additional details about your travel plans..."
+              />
+            </div>
+
           <button
-            onClick={handleSendDataToExtension}
-            className="bg-green-600 text-white px-6 py-2 rounded hover:bg-green-700"
-          >
-            Send Data
-          </button>
-        </div>
+              type="submit"
+              className="w-full py-2 px-4 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-blue-400 disabled:cursor-not-allowed flex items-center justify-center"
+            >
+              Post
+            </button>
+          </form>
       </div>}
 
       {error && (
