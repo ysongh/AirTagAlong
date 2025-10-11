@@ -11,9 +11,8 @@ export default function ExtensionAccessRequest({
     type: 'pending'
   });
   const [extensionConnected, setExtensionConnected] = useState(false);
-  const [requestBtnText, setRequestBtnText] = useState('Request Extension Access');
+  const [requestBtnText, setRequestBtnText] = useState('Connect DID');
   const [requestBtnDisabled, setRequestBtnDisabled] = useState(true);
-  const [testBtnDisabled, setTestBtnDisabled] = useState(true);
   const [showRequestBtn, setShowRequestBtn] = useState(true);
   const [tabInfo, setTabInfo] = useState(null);
   const [sendDataResponse, setSendDataResponse] = useState(null);
@@ -63,7 +62,6 @@ useEffect(() => {
             message: 'Access Granted! You can now use extension features',
             type: 'granted'
           });
-          setTestBtnDisabled(false);
           setShowRequestBtn(false);
           setNillionDiD(message.nillionDiD);
         } else {
@@ -117,7 +115,6 @@ useEffect(() => {
               message: 'Access Granted! You can now use extension features',
               type: 'granted'
             });
-            setTestBtnDisabled(false);
             setShowRequestBtn(false);
           } else if (response && response.popupOpened) {
             setStatus({
@@ -162,37 +159,30 @@ useEffect(() => {
     }
   };
 
-  const approveUser = async() => {
-    try {
-      const response = await fetch("http://localhost:4000/api/test/approve", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ nillionDiD })
-      });
+  // const approveUser = async() => {
+  //   try {
+  //     const response = await fetch("http://localhost:4000/api/test/approve", {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ nillionDiD })
+  //     });
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+  //     if (!response.ok) {
+  //       throw new Error(`HTTP error! status: ${response.status}`);
+  //     }
 
-      const result = await response.json();
-      console.log(result);
-    } catch (error) {
-      console.error(error.message);
-    }
-  };
+  //     const result = await response.json();
+  //     console.log(result);
+  //   } catch (error) {
+  //     console.error(error.message);
+  //   }
+  // };
 
   return (
     <div className="bg-gray-100 flex items-center justify-center p-5">
       <div className="bg-white p-8 rounded-lg shadow-lg max-w-2xl w-full text-center">
-        <h1 className="text-3xl font-bold text-gray-800 mb-5">
-          Extension Access Request
-        </h1>
-        <p className="text-gray-600 mb-4">
-          This web app wants to connect with your browser extension.
-        </p>
-
         <div className={getStatusClasses()}>
           {status.message}
         </div>
@@ -207,25 +197,11 @@ useEffect(() => {
               {requestBtnText}
             </button>
           )}
-          <button
-            onClick={testConnection}
-            disabled={testBtnDisabled}
-            className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-base"
-          >
-            Test Connection
-          </button>
-           <button
-            onClick={approveUser}
-            disabled={testBtnDisabled}
-            className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-base"
-          >
-            Approve User
-          </button>
         </div>
 
         {extensionConnected && (
           <div className="mt-5 p-4 bg-blue-50 rounded border border-blue-200">
-            <p>Connnected</p>
+            <p className="text-sm">{nillionDiD}</p>
             {sendDataResponse && (
               <div className={`p-3 rounded ${sendDataResponse.success ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
                 <p><strong>Status:</strong> {sendDataResponse.message}</p>
@@ -236,14 +212,6 @@ useEffect(() => {
                 )}
               </div>
             )}
-          </div>
-        )}
-
-        {tabInfo && (
-          <div className="mt-5 p-4 bg-gray-50 rounded">
-            <h3 className="text-xl font-bold mb-3">Current Tab Info:</h3>
-            <p className="text-left"><strong>Title:</strong> {tabInfo.title}</p>
-            <p className="text-left"><strong>URL:</strong> {tabInfo.url}</p>
           </div>
         )}
       </div>
