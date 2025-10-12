@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Did, Keypair, NucTokenBuilder, Command } from '@nillion/nuc';
 import { SecretVaultBuilderClient } from '@nillion/secretvaults';
 
-import ExtensionAccessRequest from './pages/ExtensionAccessRequest';
+import ExtensionAccessRequest from './components/ExtensionAccessRequest';
 import { REACT_APP_NILLION_API_KEY, REACT_APP_NILLION_COLLECTION_ID } from '../keys';
 import { sendDataToExtension } from './services/useExtension';
 
