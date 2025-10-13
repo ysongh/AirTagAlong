@@ -73,6 +73,14 @@ useEffect(() => {
           setRequestBtnText('Request Again');
         }
       }
+      else if (message.type === 'REJECTED') {
+        setStatus({
+          message: 'Access Denied by user',
+          type: 'denied'
+        });
+        setRequestBtnDisabled(false);
+        setRequestBtnText('Request Again');
+      }
     }
   };
 
