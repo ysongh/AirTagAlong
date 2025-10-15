@@ -222,8 +222,7 @@ export const NilDataWalletProvider = ({
         />
       )}
       
-      {/* Render children only if connected, or always if customUI is provided */}
-      {(extensionConnected || customUI) && children}
+      {children}
     </NilDataWalletContext.Provider>
   );
 };
@@ -240,29 +239,28 @@ const DefaultConnectionUI = ({
   extensionConnected,
   nillionDiD
 }) => {
-  const getStatusClasses = () => {
-    const baseClasses = 'px-4 py-3 rounded border font-bold my-5';
-    if (status.type === 'pending') {
-      return `${baseClasses} bg-yellow-50 text-yellow-800 border-yellow-200`;
-    } else if (status.type === 'granted') {
-      return `${baseClasses} bg-green-50 text-green-800 border-green-200`;
-    } else {
-      return `${baseClasses} bg-red-50 text-red-800 border-red-200`;
+  // if (extensionConnected) {
+  //   return null; // Don't show UI when connected
+  // }
+
+  const truncateDID = (did, startChars = 20, endChars = 20) => {
+    try{
+      if (did.length <= startChars + endChars) return did;
+      return `${did.slice(0, startChars)}...${did.slice(-endChars)}`;
+    } catch(err) {
+      console.error(err);
+      return null;
     }
   };
 
-  if (extensionConnected) {
-    return null; // Don't show UI when connected
-  }
-
   return (
-    <div className="bg-gray-100 flex items-center justify-center p-5">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-2xl w-full text-center">
-        <div className={getStatusClasses()}>
-          {status.message}
+    <div className="bg-gray-100 flex flex-row justify-end">
+      <div className="bg-white p-1 rounded-lg shadow-lg flex flex-row items-center">
+        <div className="py-2">
+          {nillionDiD && truncateDID(nillionDiD)}
         </div>
 
-        <div className="flex gap-2 justify-center">
+        <div className="">
           {showRequestBtn && (
             <button
               onClick={requestAccess}

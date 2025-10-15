@@ -19,6 +19,8 @@ function App() {
   const [delegationToken, setDelegationToken] = useState();
   const [collectionName, setCollectionName] = useState("");
 
+  console.log(extensionConnected, status)
+
   const readCollection = async () => {
     setLoading(true);
     setError(null);
