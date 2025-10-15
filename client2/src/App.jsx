@@ -128,7 +128,7 @@ function App() {
 
     const userPrivateData = {
       _id: crypto.randomUUID(),
-      name: "Coder",
+      name: e.target.name.value,
       event_name: e.target.event_name.value,
       travel_date: e.target.travel_date.value,
       departure_airport: e.target.departure_airport.value,
@@ -210,6 +210,18 @@ REACT_APP_NILLION_COLLECTION_ID=your-collection-id-here`}
       {delegationToken && <div className="mt-5 p-4 bg-blue-50 rounded border border-blue-200">
         <h3 className="text-xl font-bold mb-3">Send Data to Extension</h3>
           <form onSubmit={handleSendDataToExtension} className="space-y-6">
+            <div className="space-y-2">
+              <label className="flex items-center text-sm font-medium text-gray-700">
+                Your Name
+              </label>
+              <input
+                id="name"
+                type="text"
+                placeholder="Guest..."
+                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                required
+              />
+            </div>
             <div className="space-y-2">
               <label className="flex items-center text-sm font-medium text-gray-700">
                 Event Name
