@@ -219,6 +219,7 @@ export const NilDataWalletProvider = ({
           showRequestBtn={showRequestBtn}
           extensionConnected={extensionConnected}
           nillionDiD={nillionDiD}
+          disconnect={disconnect}
         />
       )}
       
@@ -231,13 +232,12 @@ export const NilDataWalletProvider = ({
  * Default UI component for connection
  */
 const DefaultConnectionUI = ({
-  status,
   requestAccess,
   requestBtnText,
   requestBtnDisabled,
   showRequestBtn,
-  extensionConnected,
-  nillionDiD
+  nillionDiD,
+  disconnect
 }) => {
   // if (extensionConnected) {
   //   return null; // Don't show UI when connected
@@ -256,18 +256,25 @@ const DefaultConnectionUI = ({
   return (
     <div className="bg-gray-100 flex flex-row justify-end">
       <div className="bg-white p-1 rounded-lg shadow-lg flex flex-row items-center">
-        <div className="py-2">
-          {nillionDiD && truncateDID(nillionDiD)}
-        </div>
+        {nillionDiD && <div className="py-2 mr-2">
+           {truncateDID(nillionDiD)}
+        </div>}
 
         <div className="">
-          {showRequestBtn && (
+          {showRequestBtn ? (
             <button
               onClick={requestAccess}
               disabled={requestBtnDisabled}
               className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-base"
             >
               {requestBtnText}
+            </button>
+          ) : (
+            <button
+              onClick={disconnect}
+              className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-base"
+            >
+              Disconnect
             </button>
           )}
         </div>
