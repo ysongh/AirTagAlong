@@ -2,18 +2,20 @@ import { useEffect, useState } from 'react';
 import { Did, Keypair, NucTokenBuilder, Command } from '@nillion/nuc';
 import { SecretVaultBuilderClient } from '@nillion/secretvaults';
 
-import ExtensionAccessRequest from './components/ExtensionAccessRequest';
+// import ExtensionAccessRequest from './components/ExtensionAccessRequest';
 import { REACT_APP_NILLION_API_KEY, REACT_APP_NILLION_COLLECTION_ID } from '../keys';
 import { sendDataToExtension } from './services/useExtension';
+import { useNilDataWallet } from './components/NilDataWalletProvider';
 
 const NILLION_API_KEY = REACT_APP_NILLION_API_KEY || '';
 const NILLION_COLLECTION_ID = REACT_APP_NILLION_COLLECTION_ID || '';
 
 function App() {
+  const { nillionDiD, extensionConnected, status } = useNilDataWallet();
+
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [nillionDiD, setNillionDiD] = useState("");
   const [delegationToken, setDelegationToken] = useState();
   const [collectionName, setCollectionName] = useState("");
 
@@ -136,6 +138,23 @@ function App() {
     sendDataToExtension(collectionName, userPrivateData, builderDid, delegationToken, collectionId);
   };
 
+  const test = () => {
+    const builderDid = Keypair.from(NILLION_API_KEY).toDidString();
+    const collectionId = NILLION_COLLECTION_ID;
+
+    const userPrivateData = {
+      _id: crypto.randomUUID(),
+      name: "Coder",
+      event_name: 'Hackathon',
+      travel_date: '02/04/2025',
+      departure_airport: 'LGA',
+      destination: 'AAA',
+      gate_number: '44',
+      additional_note: 'I like to code'
+    };
+    sendDataToExtension(collectionName, userPrivateData, builderDid, delegationToken, collectionId);
+  };
+
   useEffect(() => {
     if (
       NILLION_API_KEY &&
@@ -167,10 +186,10 @@ REACT_APP_NILLION_COLLECTION_ID=your-collection-id-here`}
 
   return (
     <div style={{ padding: '2rem' }}>
-      <ExtensionAccessRequest
+      {/* <ExtensionAccessRequest
         nillionDiD={nillionDiD}
         setNillionDiD={setNillionDiD}
-      />
+      /> */}
       <h1>Nillion Collection Reader</h1>
       <p>Reading all records in your Nillion Private Storage collection</p>
 
@@ -178,8 +197,12 @@ REACT_APP_NILLION_COLLECTION_ID=your-collection-id-here`}
         {loading ? 'Loading...' : 'Refresh Data'}
       </button>
 
-       <button className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-base" onClick={approveUser} disabled={loading}>
+       <button className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-base mr-3" onClick={approveUser} disabled={loading}>
         {loading ? 'Loading...' : 'Approve User'}
+      </button>
+
+       <button className="bg-blue-600 text-white px-6 py-3 rounded hover:bg-blue-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-base" onClick={test} disabled={loading}>
+        {loading ? 'Loading...' : 'Test'}
       </button>
 
       {delegationToken && <div className="mt-5 p-4 bg-blue-50 rounded border border-blue-200">
