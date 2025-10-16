@@ -5,7 +5,8 @@ import { SecretVaultBuilderClient } from '@nillion/secretvaults';
 // import ExtensionAccessRequest from './components/ExtensionAccessRequest';
 import { REACT_APP_NILLION_API_KEY, REACT_APP_NILLION_COLLECTION_ID } from '../keys';
 import { sendDataToExtension } from './services/useExtension';
-import { useNilDataWallet } from './components/NilDataWalletProvider';
+// import { useNilDataWallet } from './components/NilDataWalletProvider';
+import { useNilDataWallet } from 'nildata-wallet-connector';
 
 const NILLION_API_KEY = REACT_APP_NILLION_API_KEY || '';
 const NILLION_COLLECTION_ID = REACT_APP_NILLION_COLLECTION_ID || '';
