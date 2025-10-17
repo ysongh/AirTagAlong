@@ -4,9 +4,9 @@ import { SecretVaultBuilderClient } from '@nillion/secretvaults';
 
 // import ExtensionAccessRequest from './components/ExtensionAccessRequest';
 import { REACT_APP_NILLION_API_KEY, REACT_APP_NILLION_COLLECTION_ID } from '../keys';
-import { sendDataToExtension } from './services/useExtension';
+// import { sendDataToExtension } from './services/useExtension';
 // import { useNilDataWallet } from './components/NilDataWalletProvider';
-import { useNilDataWallet } from 'nildata-wallet-connector';
+import { useNilDataWallet, sendDataToExtension } from 'nildata-wallet-connector';
 
 const NILLION_API_KEY = REACT_APP_NILLION_API_KEY || '';
 const NILLION_COLLECTION_ID = REACT_APP_NILLION_COLLECTION_ID || '';
@@ -188,7 +188,7 @@ REACT_APP_NILLION_COLLECTION_ID=your-collection-id-here`}
   }
 
   return (
-    <div style={{ padding: '2rem' }}>
+    <div className="container mx-auto">
       {/* <ExtensionAccessRequest
         nillionDiD={nillionDiD}
         setNillionDiD={setNillionDiD}
@@ -311,8 +311,8 @@ REACT_APP_NILLION_COLLECTION_ID=your-collection-id-here`}
       )}
 
       <div style={{ marginTop: '20px' }}>
-        <p>Found {data.length} records:</p>
-        <pre style={{ background: '#f5f5f5', padding: '10px' }}>
+        <p>Found {data.length} records in {collectionName}</p>
+        <pre style={{ background: '#f5f5f5', padding: '10px', fontSize: '12px' }}>
           {JSON.stringify(data, null, 2)}
         </pre>
       </div>

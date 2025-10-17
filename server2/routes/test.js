@@ -119,7 +119,7 @@ router.get('/createcollection', async (req, res) => {
   const collection = {
     _id: collectionId,
     type: 'owned', // Every document in the collection will be user-owned
-    name: 'User Profile Collection',
+    name: 'Travelers List',
     schema: {
       $schema: 'http://json-schema.org/draft-07/schema#',
       type: 'array',
