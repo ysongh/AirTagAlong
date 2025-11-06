@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Did, Keypair, NucTokenBuilder, Command } from '@nillion/nuc';
+import { Did, Signer, Builder } from '@nillion/nuc';
 import { SecretVaultBuilderClient } from '@nillion/secretvaults';
 
 // import ExtensionAccessRequest from './components/ExtensionAccessRequest';
@@ -30,7 +30,7 @@ function App() {
       // get a Nillion API Key: https://docs.nillion.com/build/network-api-access
       // see Nillion Testnet Config: https://docs.nillion.com/build/network-config#nildb-nodes
       const builder = await SecretVaultBuilderClient.from({
-        keypair: Keypair.from(NILLION_API_KEY),
+        keypair: Signer.fromPrivateKey(NILLION_API_KEY),
         urls: {
           chain: 'http://rpc.testnet.nilchain-rpc-proxy.nilogy.xyz',
           auth: 'https://nilauth.sandbox.app-cluster.sandbox.nilogy.xyz',
@@ -68,11 +68,11 @@ function App() {
     setError(null);
 
     try {
-      const builderKeypair = Keypair.from(NILLION_API_KEY);
+      const builderKeypair = Signer.fromPrivateKey(NILLION_API_KEY);
       // get a Nillion API Key: https://docs.nillion.com/build/network-api-access
       // see Nillion Testnet Config: https://docs.nillion.com/build/network-config#nildb-nodes
       const builder = await SecretVaultBuilderClient.from({
-        keypair: Keypair.from(NILLION_API_KEY),
+        keypair: Signer.fromPrivateKey(NILLION_API_KEY),
         urls: {
           chain: 'http://rpc.testnet.nilchain-rpc-proxy.nilogy.xyz',
           auth: 'https://nilauth.sandbox.app-cluster.sandbox.nilogy.xyz',
@@ -100,7 +100,7 @@ function App() {
       console.log(typeof NILLION_API_KEY, NILLION_API_KEY, NILLION_API_KEY.length)
 
       // Builder grants write access to the user
-      const delegation = NucTokenBuilder.extending(builder.rootToken)
+      const delegation = Builder.extending(builder.rootToken)
         .command(new Command(['nil', 'db', 'data', 'create']))
         .audience(exampleDid)
         .expiresAt(Math.floor(Date.now() / 1000) + 3600) // 1 hour
@@ -124,7 +124,7 @@ function App() {
   const handleSendDataToExtension = (e) => {
     e.preventDefault();
 
-    const builderDid = Keypair.from(NILLION_API_KEY).toDidString();
+    const builderDid = Signer.from(NILLION_API_KEY).toDidString();
     const collectionId = NILLION_COLLECTION_ID;
 
     const userPrivateData = {
@@ -142,7 +142,7 @@ function App() {
   };
 
   const test = () => {
-    const builderDid = Keypair.from(NILLION_API_KEY).toDidString();
+    const builderDid = Signer.from(NILLION_API_KEY).toDidString();
     const collectionId = NILLION_COLLECTION_ID;
 
     const userPrivateData = {

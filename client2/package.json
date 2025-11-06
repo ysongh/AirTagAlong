@@ -10,8 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@nillion/nuc": "^0.1.1",
-    "@nillion/secretvaults": "^0.1.6",
+    "@nillion/nuc": "^1.0.0",
+    "@nillion/secretvaults": "^1.0.0",
     "@tailwindcss/vite": "^4.1.14",
     "@types/chrome": "^0.1.14",
     "nildata-wallet-connector": "^1.1.0",
