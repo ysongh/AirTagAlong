@@ -30,7 +30,7 @@ function App() {
       // get a Nillion API Key: https://docs.nillion.com/build/network-api-access
       // see Nillion Testnet Config: https://docs.nillion.com/build/network-config#nildb-nodes
       const builder = await SecretVaultBuilderClient.from({
-        keypair: Signer.fromPrivateKey(NILLION_API_KEY),
+        signer: Signer.fromPrivateKey(NILLION_API_KEY),
         urls: {
           chain: 'http://rpc.testnet.nilchain-rpc-proxy.nilogy.xyz',
           auth: 'https://nilauth.sandbox.app-cluster.sandbox.nilogy.xyz',
@@ -43,10 +43,9 @@ function App() {
         blindfold: { operation: 'store' },
       });
 
-      console.log(builder)
-
+      console.log(builder);
       await builder.refreshRootToken();
-      console.log(builder)
+
       const response = await builder.findData({
         collection: NILLION_COLLECTION_ID,
         filter: {},
@@ -72,7 +71,7 @@ function App() {
       // get a Nillion API Key: https://docs.nillion.com/build/network-api-access
       // see Nillion Testnet Config: https://docs.nillion.com/build/network-config#nildb-nodes
       const builder = await SecretVaultBuilderClient.from({
-        keypair: Signer.fromPrivateKey(NILLION_API_KEY),
+        signer: Signer.fromPrivateKey(NILLION_API_KEY),
         urls: {
           chain: 'http://rpc.testnet.nilchain-rpc-proxy.nilogy.xyz',
           auth: 'https://nilauth.sandbox.app-cluster.sandbox.nilogy.xyz',
