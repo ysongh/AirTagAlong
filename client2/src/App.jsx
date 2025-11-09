@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Did, Signer, Builder } from '@nillion/nuc';
+import { Did, Signer, Builder, NilauthClient } from '@nillion/nuc';
 import { SecretVaultBuilderClient } from '@nillion/secretvaults';
 
 // import ExtensionAccessRequest from './components/ExtensionAccessRequest';
@@ -27,10 +27,15 @@ function App() {
     setError(null);
 
     try {
+      const builderSigner = Signer.fromPrivateKey(NILLION_API_KEY);
+      const nilauthClient = await NilauthClient.create({
+        baseUrl: 'https://nilauth.sandbox.app-cluster.sandbox.nilogy.xyz',
+        payer: builderSigner
+      });
       // get a Nillion API Key: https://docs.nillion.com/build/network-api-access
       // see Nillion Testnet Config: https://docs.nillion.com/build/network-config#nildb-nodes
       const builder = await SecretVaultBuilderClient.from({
-        signer: Signer.fromPrivateKey(NILLION_API_KEY),
+        signer: builderSigner,
         urls: {
           chain: 'http://rpc.testnet.nilchain-rpc-proxy.nilogy.xyz',
           auth: 'https://nilauth.sandbox.app-cluster.sandbox.nilogy.xyz',
@@ -41,6 +46,7 @@ function App() {
           ],
         },
         blindfold: { operation: 'store' },
+        nilauthClient
       });
 
       console.log(builder);
@@ -67,11 +73,17 @@ function App() {
     setError(null);
 
     try {
+      const builderSigner = Signer.fromPrivateKey(NILLION_API_KEY);
+      const nilauthClient = await NilauthClient.create({
+        baseUrl: 'https://nilauth.sandbox.app-cluster.sandbox.nilogy.xyz',
+        payer: builderSigner
+      });
+
       const builderKeypair = Signer.fromPrivateKey(NILLION_API_KEY);
       // get a Nillion API Key: https://docs.nillion.com/build/network-api-access
       // see Nillion Testnet Config: https://docs.nillion.com/build/network-config#nildb-nodes
       const builder = await SecretVaultBuilderClient.from({
-        signer: Signer.fromPrivateKey(NILLION_API_KEY),
+        signer: builderSigner,
         urls: {
           chain: 'http://rpc.testnet.nilchain-rpc-proxy.nilogy.xyz',
           auth: 'https://nilauth.sandbox.app-cluster.sandbox.nilogy.xyz',
@@ -82,6 +94,7 @@ function App() {
           ],
         },
         blindfold: { operation: 'store' },
+        nilauthClient
       });
 
       await builder.refreshRootToken();
