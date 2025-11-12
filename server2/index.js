@@ -5,6 +5,7 @@ import pkg from 'body-parser';
 import testRoutes from './routes/test.js';
 import travelerRoutes from './routes/traveler.js';
 import blindfoldRoutes from './routes/blindfold.js';
+import { specs, swaggerUi } from './swagger.js';
 
 const { json } = pkg;
 const app = express();
@@ -15,6 +16,7 @@ app.use(cors());
 // Middleware for parsing JSON bodies
 app.use(json());
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 app.use('/api/test', testRoutes);
 app.use('/api/traveler', travelerRoutes);
 app.use('/api/blindfold', blindfoldRoutes);
