@@ -8,6 +8,8 @@ import { REACT_APP_NILLION_API_KEY, REACT_APP_NILLION_COLLECTION_ID } from '../k
 // import { useNilDataWallet } from './components/NilDataWalletProvider';
 import { useNilDataWallet, sendDataToExtension } from 'nildata-wallet-connector';
 
+import { connectMetaMask } from './context/NillionContext';
+
 const NILLION_API_KEY = REACT_APP_NILLION_API_KEY || '';
 const NILLION_COLLECTION_ID = REACT_APP_NILLION_COLLECTION_ID || '';
 
@@ -207,6 +209,12 @@ REACT_APP_NILLION_COLLECTION_ID=your-collection-id-here`}
       /> */}
       <h1>Nillion Collection Reader</h1>
       <p>Reading all records in your Nillion Private Storage collection</p>
+      
+      <button className="bg-green-600 text-white px-6 py-3 rounded hover:bg-green-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-base mr-3" onClick={connectMetaMask}>
+        Connect MetaMask
+      </button>
+
+      <div className="mb-4"></div>
 
       <button className="bg-green-600 text-white px-6 py-3 rounded hover:bg-green-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-base mr-3" onClick={readCollection} disabled={loading}>
         {loading ? 'Loading...' : 'Refresh Data'}
