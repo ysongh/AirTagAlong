@@ -1,7 +1,7 @@
 import { NillionClient } from "@nillion/secretvaults";
-import { NETWORK_CONFIG } from "@/config";
+import { NETWORK_CONFIG } from "../config";
 
-async function initializeSession(signer) {
+export async function initializeSession(signer) {
   const client = new NillionClient({
     signer,
     nilchain: NETWORK_CONFIG.nilchain,

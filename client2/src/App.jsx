@@ -9,6 +9,7 @@ import { REACT_APP_NILLION_API_KEY, REACT_APP_NILLION_COLLECTION_ID } from '../k
 import { useNilDataWallet, sendDataToExtension } from 'nildata-wallet-connector';
 
 import { connectMetaMask } from './context/NillionContext';
+// import { initializeSession } from './hooks/useNillionClient';
 
 const NILLION_API_KEY = REACT_APP_NILLION_API_KEY || '';
 const NILLION_COLLECTION_ID = REACT_APP_NILLION_COLLECTION_ID || '';
@@ -172,6 +173,18 @@ function App() {
     sendDataToExtension(collectionName, userPrivateData, builderDid, delegationToken, collectionId);
   };
 
+  const handleConnectMetaMask = async () => {
+    try{
+      const userData = await connectMetaMask();
+      console.log(userData);
+      // const NilClient = await initializeSession(userData.signer);
+      // console.log(NilClient);
+    } catch(err) {
+      console.error(err);
+    }
+    
+  }
+
   useEffect(() => {
     if (
       NILLION_API_KEY &&
@@ -210,7 +223,7 @@ REACT_APP_NILLION_COLLECTION_ID=your-collection-id-here`}
       <h1>Nillion Collection Reader</h1>
       <p>Reading all records in your Nillion Private Storage collection</p>
       
-      <button className="bg-green-600 text-white px-6 py-3 rounded hover:bg-green-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-base mr-3" onClick={connectMetaMask}>
+      <button className="bg-green-600 text-white px-6 py-3 rounded hover:bg-green-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-base mr-3" onClick={handleConnectMetaMask}>
         Connect MetaMask
       </button>
 
