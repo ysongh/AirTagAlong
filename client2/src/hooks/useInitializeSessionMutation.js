@@ -1,0 +1,110 @@
+import { Builder, Codec, NilauthClient } from "@nillion/nuc";
+import { NucCmd, SecretVaultBuilderClient } from "@nillion/secretvaults";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+
+import { NETWORK_CONFIG } from "../config";
+import { useNillion } from "./useNillion";
+import { usePersistedConnection } from "./usePersistedConnection";
+
+async function initializeSession(signer) {
+  if (!signer) {
+    throw new Error("Signer not available");
+  }
+
+  console.log("[Nillion] Initializing clients...");
+
+  const nilauthClient = await NilauthClient.create({ 
+    baseUrl: NETWORK_CONFIG.nilauth, 
+    payer: undefined 
+  });
+  console.log("[Nillion] Nilauth client created");
+
+  const subscriberDid = await signer.getDid();
+  console.log("[Nillion] Checking subscription status for builder account...");
+  
+  const subStatus = await nilauthClient.subscriptionStatus(subscriberDid, "nildb");
+
+  if (!subStatus.subscribed) {
+    const errorMsg = "No active NilDB subscription found for this builder account.";
+    console.error("[Nillion] " + errorMsg);
+    throw new Error(errorMsg);
+  }
+  
+  console.log("[Nillion] Active subscription found for builder account.");
+
+  const nillionClient = await SecretVaultBuilderClient.from({
+    signer,
+    nilauthClient,
+    dbs: NETWORK_CONFIG.nildb,
+    blindfold: { operation: "store" },  // Enable encryption for %allot fields
+  });
+
+  console.log("[Nillion] Creating root authorization token...");
+  await nillionClient.refreshRootToken();
+  const rootToken = nillionClient.rootToken;
+  console.log("[Nillion] Root token created.");
+
+  console.log(`[Nillion] Minting invocation tokens for ${nillionClient.nodes.length} NilDB nodes...`);
+  const nildbTokens = {};
+  for (const node of nillionClient.nodes) {
+    nildbTokens[node.id.didString] = await Builder.invocationFrom(rootToken)
+      .audience(node.id)
+      .command(NucCmd.nil.db.root)
+      .expiresIn(86400)
+      .signAndSerialize(signer);
+  }
+  console.log("[Nillion] All node tokens minted.");
+
+  console.log("[Nillion] Checking for existing builder profile...");
+  try {
+    await nillionClient.readProfile({ auth: { invocations: nildbTokens } });
+    console.log("[Nillion] Builder profile found.");
+  } catch (_error) {
+    console.log("[Nillion] No profile found, attempting to register builder...");
+    try {
+      await nillionClient.register({
+        did: subscriberDid.didString,
+        name: "Demo Builder",
+      });
+      console.log("[Nillion] Builder registered successfully.");
+    } catch (registerError) {
+      const errorMessage = registerError?.message || String(registerError);
+      const errorString = JSON.stringify(registerError);
+      const errorsArray = registerError?.errors || [];
+      const hasDuplicateError =
+        errorMessage.includes("DuplicateEntryError") ||
+        errorMessage.includes("duplicate") ||
+        errorString.includes("DuplicateEntryError") ||
+        errorsArray.some((e) => String(e).includes("DuplicateEntryError"));
+      
+      if (hasDuplicateError) {
+        console.log("[Nillion] Builder already registered (duplicate entry) - continuing.");
+      } else {
+        throw registerError;
+      }
+    }
+  }
+
+  return { nillionClient, nilauthClient, rootToken, nildbTokens };
+}
+
+export const useInitializeSessionMutation = () => {
+  const { state } = useNillion();
+  const queryClient = useQueryClient();
+  const { setStoredRootToken, setStoredNildbTokens } = usePersistedConnection();
+
+  return useMutation({
+    mutationFn: () => initializeSession(state.signer),
+    onSuccess: (data) => {
+      console.log("[Nillion] Session setup complete!");
+      queryClient.setQueryData(["session"], data);
+      setStoredRootToken(Codec.serializeBase64Url(data.rootToken));
+      setStoredNildbTokens(data.nildbTokens);
+      queryClient.invalidateQueries({ queryKey: ["builderProfile"] });
+    },
+    onError: (error) => {
+      console.error("[Nillion] Session initialization failed", error instanceof Error ? error.message : String(error));
+      console.error("Full Error:", error);
+    },
+  });
+};
