@@ -2,7 +2,7 @@ import { createContext, useCallback, useEffect, useMemo, useState, useRef } from
 import { useQueryClient } from "@tanstack/react-query";
 import { Signer } from "@nillion/nuc";
 import { createWalletClient, custom } from "viem";
-import { mainnet } from "viem/chains";
+import { mainnet, sepolia } from "viem/chains";
 import { AuthFlowManager } from "./AuthFlowManager";
 
 import { usePersistedConnection } from "../hooks/usePersistedConnection";
@@ -25,7 +25,7 @@ export const connectMetaMask = async () => {
 
   // Create wallet client with viem
   const walletClient = createWalletClient({
-    chain: mainnet,
+    chain: sepolia,
     transport: custom(window.ethereum),
   });
 
