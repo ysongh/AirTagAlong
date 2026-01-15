@@ -1,7 +1,11 @@
+import { useNavigate } from "react-router-dom";
+
 import { useNillion } from "../hooks/useNillion";
 import { useSessionQuery } from "../hooks/useSessionQuery";
 
 export default function Home() {
+  const navigate = useNavigate();
+
   const { state, connectMetaMask, logout } = useNillion();
   const { isSuccess: isSessionReady } = useSessionQuery();
 
@@ -134,7 +138,7 @@ export default function Home() {
               {/* Action Buttons */}
               <div className="space-y-3">
                 <button
-                  onClick={() => window.location.href = "/profile"}
+                  onClick={() => navigate("/profile")}
                   className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white font-semibold py-3 px-6 rounded-xl transition-all shadow-lg hover:shadow-xl"
                 >
                   View Profile →
