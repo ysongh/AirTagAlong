@@ -111,6 +111,27 @@ export function useNotes() {
     },
   });
 
+  // DELETE: Remove a note
+  const deleteNoteMutation = useMutation({
+    mutationFn: async (id) => {
+      if (!clientResult || !collectionId) {
+        throw new Error("Not ready");
+      }
+      const { nillionClient, nildbTokens } = clientResult;
+
+      await nillionClient.deleteData(
+        {
+          collection: collectionId,
+          filter: { _id: id },
+        },
+        { auth: { invocations: nildbTokens } }
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["notes", collectionId, walletAddress] });
+    },
+  });
+
   return {
     // Data
     notes: notesQuery.data || [],
@@ -128,14 +149,17 @@ export function useNotes() {
     // Mutations
     createNote: createNoteMutation.mutate,
     updateNote: updateNoteMutation.mutate,
+    deleteNote: deleteNoteMutation.mutate,
 
     // Mutation states
     isCreating: createNoteMutation.isPending,
     isUpdating: updateNoteMutation.isPending,
+    isDeleting: deleteNoteMutation.isPending,
 
     // Mutation errors
     createError: createNoteMutation.error,
     updateError: updateNoteMutation.error,
+    deleteError: deleteNoteMutation.error,
 
     // Refetch
     refetch: notesQuery.refetch,
