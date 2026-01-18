@@ -1,16 +1,14 @@
-import { NillionClient } from "@nillion/secretvaults";
-import { NETWORK_CONFIG } from "../config";
+import { useSessionQuery } from "./useSessionQuery";
 
-export async function initializeSession(signer) {
-  const client = new NillionClient({
-    signer,
-    nilchain: NETWORK_CONFIG.nilchain,
-    nilauth: NETWORK_CONFIG.nilauth,
-    nildb: NETWORK_CONFIG.nildb,
-  });
+export function useNillionClient() {
+  const { data: session, isSuccess } = useSessionQuery();
 
-  // Initialize session - this authenticates the user
-  await client.initialize();
+  if (!isSuccess || !session?.nillionClient || !session?.nildbTokens) {
+    return null;
+  }
 
-  return client;
+  return {
+    nillionClient: session.nillionClient,
+    nildbTokens: session.nildbTokens,
+  };
 }
