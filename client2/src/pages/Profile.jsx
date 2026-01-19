@@ -1,3 +1,4 @@
+import { Notes } from "../components/Notes";
 import { useNillion } from "../hooks/useNillion";
 import { useProfile } from "../hooks/useProfile";
 
@@ -90,6 +91,7 @@ export default function Profile() {
             </p>
           )}
         </div>
+        <Notes />
       </main>
     </div>
   );
