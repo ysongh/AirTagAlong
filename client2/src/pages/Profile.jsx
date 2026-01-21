@@ -1,3 +1,4 @@
+import Header from "../components/Header";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 import { Notes } from "../components/Notes";
 import { useNillion } from "../hooks/useNillion";
@@ -10,6 +11,7 @@ export default function Profile() {
   return (
     <ProtectedRoute>
       <div className="min-h-screen bg-gradient-to-br from-zinc-50 to-zinc-100 dark:from-zinc-900 dark:to-black">
+        <Header />
         {/* Main Content */}
         <main className="max-w-4xl mx-auto px-6 py-8 space-y-6">
           {/* User Info Card */}
