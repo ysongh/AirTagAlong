@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNillionClient } from "./useNillionClient";
 import { useTravelersCollection } from "./useTravelersCollection";
 import { useNillion } from "./useNillion";
@@ -7,6 +7,7 @@ export function useTravelers() {
   const clientResult = useNillionClient();
   const { state } = useNillion();
   const { data: collectionId, isSuccess: isCollectionReady, isLoading: isCollectionLoading, error: collectionError } = useTravelersCollection();
+  const queryClient = useQueryClient();
   const walletAddress = state.wallets.metaMaskAddress;
 
   // READ: Fetch all travelers for this wallet
@@ -35,6 +36,54 @@ export function useTravelers() {
     staleTime: 5000,  // Don't refetch for 5 seconds
   });
 
+  // CREATE: Add a new traveler
+  const createTravelerMutation = useMutation({
+    mutationFn: async ({ event_name, travel_date, content }) => {
+      console.log("[useTravelers] Creating note...", { event_name, travel_date, content, collectionId, walletAddress });
+
+      if (!clientResult || !collectionId || !walletAddress) {
+        throw new Error("Not ready - missing client, collection, or wallet");
+      }
+      const { nillionClient, nildbTokens } = clientResult;
+
+      const now = new Date().toISOString();
+      const travelerData = {
+        _id: crypto.randomUUID(),
+        walletAddress: walletAddress.toLowerCase(),    // Plaintext - for filtering
+        event_name,                                    // Plaintext
+        travel_date,
+        content: ensureAllot(content),                 // ENCRYPTED - secret shared across nodes
+        createdAt: now,
+        updatedAt: now,
+      };
+
+      console.log("[useTravelers] Sending to nilDB (content will be encrypted):", travelerData);
+
+      const result = await nillionClient.createStandardData(
+        {
+          collection: collectionId,
+          data: [travelerData],
+        },
+        { auth: { invocations: nildbTokens } }
+      );
+
+      console.log("[useTravelers] Create result:", result);
+      return travelerData;
+    },
+    onSuccess: () => {
+      console.log("[useTravelers] Note created successfully!");
+      queryClient.invalidateQueries({ queryKey: ["travelers", collectionId, walletAddress] });
+    },
+    onError: (error) => {
+      console.error("[useTravelers] Failed to create traveler:");
+      console.error("Error type:", typeof error);
+      console.error("Error stringified:", JSON.stringify(error, null, 2));
+      if (Array.isArray(error)) {
+        error.forEach((e, i) => console.error(`Node ${i} error:`, e));
+      }
+    },
+  });
+
   return {
     // Data
     travelers: travelersQuery.data || [],
@@ -49,7 +98,27 @@ export function useTravelers() {
     isError: travelersQuery.isError || !!collectionError,
     error: travelersQuery.error || collectionError,
 
+    // Mutations
+    createTraveler: createTravelerMutation.mutate,
+
+    // Mutation states
+    isCreating: createTravelerMutation.isPending,
+
+    // Mutation errors
+    createError: createTravelerMutation.error,
+
     // Refetch
     refetch: travelersQuery.refetch,
   };
+}
+
+/**
+ * Normalize any content value to the %allot shape that NilDB expects.
+ * Guards against callers accidentally passing a plain string or an empty object.
+ */
+function ensureAllot(content) {
+  if (content && typeof content === "object" && "%allot" in content && typeof content["%allot"] === "string") {
+    return content;
+  }
+  return { "%allot": typeof content === "string" ? content : "" };
 }
