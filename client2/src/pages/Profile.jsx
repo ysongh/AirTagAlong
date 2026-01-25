@@ -1,6 +1,7 @@
 import Header from "../components/Header";
 import { ProtectedRoute } from "../components/ProtectedRoute";
 import { Notes } from "../components/Notes";
+import { Travelers } from "../components/Travelers";
 import { useNillion } from "../hooks/useNillion";
 import { useProfile } from "../hooks/useProfile";
 
@@ -96,6 +97,7 @@ export default function Profile() {
             )}
           </div>
           <Notes />
+          <Travelers />
         </main>
       </div>
     </ProtectedRoute>
