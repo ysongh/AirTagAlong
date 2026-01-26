@@ -84,6 +84,28 @@ export function useTravelers() {
     },
   });
 
+  // DELETE: Remove a traveler
+  const deleteTravelerMutation = useMutation({
+    mutationFn: async (id) => {
+      if (!clientResult || !collectionId) {
+        throw new Error("Not ready");
+      }
+      const { nillionClient, nildbTokens } = clientResult;
+
+      await nillionClient.deleteData(
+        {
+          collection: collectionId,
+          filter: { _id: id },
+        },
+        { auth: { invocations: nildbTokens } }
+      );
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["travelers", collectionId, walletAddress] });
+    },
+  });
+
+
   return {
     // Data
     travelers: travelersQuery.data || [],
@@ -100,12 +122,15 @@ export function useTravelers() {
 
     // Mutations
     createTraveler: createTravelerMutation.mutate,
+    deleteTraveler: deleteTravelerMutation.mutate,
 
     // Mutation states
     isCreating: createTravelerMutation.isPending,
+    isDeleting: deleteTravelerMutation.isPending,
 
     // Mutation errors
     createError: createTravelerMutation.error,
+    deleteError: deleteTravelerMutation.error,
 
     // Refetch
     refetch: travelersQuery.refetch,
