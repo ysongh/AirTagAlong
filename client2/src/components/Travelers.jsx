@@ -11,7 +11,9 @@ export function Travelers() {
     isError,
     error,
     createTraveler,
+    deleteTraveler,
     isCreating,
+    isDeleting,
     createError,
   } = useTravelers();
 
@@ -31,6 +33,12 @@ export function Travelers() {
         },
       }
     );
+  };
+
+  const handleDelete = (id) => {
+    if (confirm("Delete this note?")) {
+      deleteTraveler(id);
+    }
   };
 
   return (
@@ -151,6 +159,13 @@ export function Travelers() {
                     {traveler.event_name}
                   </h5>
                   <p>{traveler.travel_date}</p>
+                    <button
+                      onClick={() => handleDelete(traveler._id)}
+                      disabled={isDeleting}
+                      className="text-xs text-red-600 hover:text-red-700 dark:text-red-400"
+                    >
+                      Delete
+                    </button>
                 </div>
                 <div className="flex items-start gap-2">
                   <svg className="w-3 h-3 mt-1 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
