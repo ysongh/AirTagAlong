@@ -12,14 +12,20 @@ export function Travelers() {
     error,
     createTraveler,
     deleteTraveler,
+    updateTraveler,
     isCreating,
     isDeleting,
+    isUpdating,
     createError,
   } = useTravelers();
 
   const [newEventName, setNewEventName] = useState("");
   const [newContent, setNewContent] = useState("");
   const [newTravelDate, setNewTravelDate] = useState("");
+  const [editingTraveler, setEditingTraveler] = useState(null);
+  const [editEventName, setEditEventName] = useState("");
+  const [editContent, setEditContent] = useState("");
+  const [editTravelDate, setEditTravelDate] = useState("");
 
   const handleCreate = () => {
     if (!newEventName.trim() || !newTravelDate.trim() || !newContent.trim()) return;
@@ -39,6 +45,35 @@ export function Travelers() {
     if (confirm("Delete this note?")) {
       deleteTraveler(id);
     }
+  };
+
+  const handleUpdate = () => {
+    if (!editingTraveler || !editEventName.trim() || !editTravelDate.trim() || !editContent.trim()) return;
+    updateTraveler(
+      { id: editingTraveler._id, event_name: editEventName, travel_date: editTravelDate,  content: editContent },
+      {
+        onSuccess: () => {
+          setEditingTraveler(null);
+          setEditEventName("");
+          setEditTravelDate("");
+          setEditContent("");
+        },
+      }
+    );
+  };
+
+  const startEdit = (traveler) => {
+    setEditingTraveler(traveler);
+    setEditEventName(traveler.event_name);
+    setEditTravelDate(traveler.travel_date);
+    setEditContent(traveler.content);
+  };
+
+  const cancelEdit = () => {
+    setEditingTraveler(null);
+    setEditEventName("");
+    setEditTravelDate("");
+    setEditContent("");
   };
 
   return (
@@ -153,32 +188,83 @@ export function Travelers() {
               key={traveler._id}
               className="p-4 bg-zinc-50 dark:bg-zinc-800 rounded-lg border border-zinc-200 dark:border-zinc-700"
             >
-              <div>
-                <div className="flex justify-between items-start mb-2">
-                  <h5 className="font-semibold text-zinc-900 dark:text-white">
-                    {traveler.event_name}
-                  </h5>
-                  <p>{traveler.travel_date}</p>
+              {editingTraveler?._id === traveler._id ? (
+                <div>
+                  <input
+                    type="text"
+                    placeholder="Event Name"
+                    value={editEventName}
+                    onChange={(e) => setEditEventName(e.target.value)}
+                    className="w-full mb-2 px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white text-sm"
+                  />
+                  <label className="flex items-center text-sm font-medium text-gray-700">
+                    Travel Date
+                  </label>
+                  <input
+                    type="date"
+                    value={editTravelDate}
+                    onChange={(e) => setEditTravelDate(e.target.value)}
+                    className="w-full mb-2 px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white text-sm"
+                  />
+                  <textarea
+                    placeholder="Content"
+                    value={editContent}
+                    onChange={(e) => setEditContent(e.target.value)}
+                    rows={3}
+                    className="w-full mb-1 px-3 py-2 border border-zinc-300 dark:border-zinc-600 rounded-lg bg-white dark:bg-zinc-700 text-zinc-900 dark:text-white text-sm resize-none"
+                  />
+                  <div className="flex gap-2">
                     <button
-                      onClick={() => handleDelete(traveler._id)}
-                      disabled={isDeleting}
-                      className="text-xs text-red-600 hover:text-red-700 dark:text-red-400"
+                      onClick={handleUpdate}
+                      disabled={isUpdating}
+                      className="px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-zinc-400 text-white text-sm rounded-lg transition-colors"
                     >
-                      Delete
+                      {isUpdating ? "Saving..." : "Save"}
                     </button>
+                    <button
+                      onClick={cancelEdit}
+                      className="px-3 py-1.5 bg-zinc-500 hover:bg-zinc-600 text-white text-sm rounded-lg transition-colors"
+                    >
+                      Cancel
+                    </button>
+                  </div>
                 </div>
-                <div className="flex items-start gap-2">
-                  <svg className="w-3 h-3 mt-1 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                  </svg>
-                  <p className="text-sm text-zinc-600 dark:text-zinc-400 whitespace-pre-wrap">
-                    {traveler.content}
+              ) : (
+                <div>
+                  <div className="flex justify-between items-start mb-2">
+                    <h5 className="font-semibold text-zinc-900 dark:text-white">
+                      {traveler.event_name}
+                    </h5>
+                    <p>{traveler.travel_date}</p>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => startEdit(traveler)}
+                        className="text-xs text-blue-600 hover:text-blue-700 dark:text-blue-400"
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDelete(traveler._id)}
+                        disabled={isDeleting}
+                        className="text-xs text-red-600 hover:text-red-700 dark:text-red-400"
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <svg className="w-3 h-3 mt-1 text-green-500 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                    </svg>
+                    <p className="text-sm text-zinc-600 dark:text-zinc-400 whitespace-pre-wrap">
+                      {traveler.content}
+                    </p>
+                  </div>
+                  <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-2">
+                    Updated: {new Date(traveler.updatedAt).toLocaleString()}
                   </p>
                 </div>
-                <p className="text-xs text-zinc-400 dark:text-zinc-500 mt-2">
-                  Updated: {new Date(traveler.updatedAt).toLocaleString()}
-                </p>
-              </div>
+              )}
             </div>
           ))}
         </div>
